@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Aqua azul - Ver productos</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        <%- include('./partials/head'); %>
+    </head>
+    <body>
+        <%- include('./partials/navbar'); %>
+        <h1>Lista de productos</h1>
+        <% if(productoAgregado) { %>
+            <div class="alert alert-info">
+                <button class="close" data-dismiss="alert"><span>&times;</span></button>
+                Producto agregado al carrito de compras
+            </div>
+        <% } %>
+        <div class="container">
+            <div class="row">
+                <%- include('./partials/producto'); %>
+            </div>
+        </div>                      
+    </body>
+</html>

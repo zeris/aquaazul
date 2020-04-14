@@ -1,0 +1,28 @@
+{
+  "name": "aquazul",
+  "version": "0.1.0",
+  "description": "Pagina web de Aqua azul",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "author": "Fernanda Daniela Ramos Argueta",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "chai": "^4.2.0",
+    "ejs": "^3.0.1",
+    "express": "^4.17.1",
+    "express-flash": "0.0.2",
+    "express-session": "^1.17.0",
+    "mocha": "^7.1.1",
+    "mssql": "^6.1.0",
+    "passport": "^0.4.1",
+    "passport-local": "^1.0.0",
+    "tedious": "^8.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.2"
+  }
+}
