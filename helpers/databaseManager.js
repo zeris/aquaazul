@@ -1,12 +1,16 @@
 const sql = require('mssql');
 
+//Descomentar credenciales que pertenezcan y descomentar las que no pertenezcan al servidor local
 const sqlConfig = 
 {
    local : 
    {
-      user: 'fernanda',
-      password: '12345',
-      server: 'DESKTOP-S44R409\\SQLEXPRESS',  
+      //user: 'fernanda',
+      //password: '12345',
+      //server: 'DESKTOP-S44R409\\SQLEXPRESS',
+      user: 'sa',
+      password: 'a1',
+      server: 'LAPTOP-UBV74QOR\\SQLEXPRESS',  
       database: 'CARRITO',
       port: 1433
    },
