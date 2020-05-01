@@ -50,7 +50,13 @@ router.get('/carritocompras', function(req, res)
    sql.query("SELECT PRODUCTO.ID_SKU, NOMBRE, MARCA, DESCRIPCION, PRECIO FROM CARRITO INNER JOIN PRODUCTO ON CARRITO.ID_SKU = PRODUCTO.ID_SKU WHERE ID_USUARIO="+req.user.ID_USUARIO, function(carrito)
    {
       console.log(carrito);
-      res.render('carrito-compras', {carritoCompras:carrito});
+      var totalCompra=0;
+      for(const prodCarrito of carrito)
+      {
+         totalCompra+= prodCarrito.PRECIO;
+      }
+      console.log(totalCompra);
+      res.render('carrito-compras', {carritoCompras:carrito, totalCompra:totalCompra});
    });
    
 });
