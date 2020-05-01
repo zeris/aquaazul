@@ -10,7 +10,7 @@ const sqlConfig =
       //server: 'DESKTOP-S44R409\\SQLEXPRESS',
       user: 'sa',
       password: 'a1',
-      server: 'LAPTOP-UBV74QOR\\SQLEXPRESS',  
+      server: 'LAPTOP-UCMMQ8CB\\SQLEXPRESS',  
       database: 'CARRITO',
       port: 1433
    },
