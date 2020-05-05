@@ -35,6 +35,7 @@ router.get('/listaproductos',checkAuthenticated, function(req, res)
 {
    sql.query("SELECT * FROM producto", (respuestaQuery)=>
    {
+      respuestaQuery=respuestaQuery.recordset;
       let params = {listaProductos: respuestaQuery, productoAgregado: false };
       if(productoAgregado)
       {
@@ -47,8 +48,9 @@ router.get('/listaproductos',checkAuthenticated, function(req, res)
 
 router.get('/carritocompras', function(req, res)
 {
-   sql.query("SELECT PRODUCTO.ID_SKU, NOMBRE, MARCA, DESCRIPCION, PRECIO FROM CARRITO INNER JOIN PRODUCTO ON CARRITO.ID_SKU = PRODUCTO.ID_SKU WHERE ID_USUARIO="+req.user.ID_USUARIO, function(carrito)
+   sql.query("SELECT PRODUCTO.ID_SKU, NOMBRE, MARCA, DESCRIPCION, PRECIO FROM CARRITO INNER JOIN PRODUCTO ON CARRITO.ID_SKU = PRODUCTO.ID_SKU WHERE ID_USUARIO="+req.user.ID_USUARIO, function(carrito1)
    {
+      let carrito=carrito1.recordset;
       console.log(carrito);
       var totalCompra=0;
       for(const prodCarrito of carrito)
@@ -79,6 +81,25 @@ router.get('/agregar-a-carrito/:id', checkAuthenticated, function(req, res)
       //sql.query("INSERT INTO CARRITO (ID_SKU, ID_USUARIO) VALUES (" + req.params.id + ", " + req.user.ID_USUARIO + ")")
    });
 });
+
+router.get('/eliminar-carrito/:id', checkAuthenticated, function(req, res)
+{
+   console.log(req.params.id);
+   let query= "DELETE FROM CARRITO WHERE ID_SKU= " + req.params.id  + " AND ID_USUARIO= " + req.user.ID_USUARIO;
+   sql.query(query, (respuestaQuery)=>
+   {
+      console.log(respuestaQuery)
+      //productoAgregado = true;
+      if(respuestaQuery.rowsAffected > 0)
+      {
+         res.redirect('/carritocompras');
+      }
+      
+      //sql.query("INSERT INTO CARRITO (ID_SKU, ID_USUARIO) VALUES (" + req.params.id + ", " + req.user.ID_USUARIO + ")")
+   });
+});
+
+
 
 //ZONA DE PROGRAMACIÓN, aquí se debe de poner todo el contenido de programación para cada una de las páginas que
 //tengan un procesamiento de base de datos, tiendo como método http "post" em lugar de "get"

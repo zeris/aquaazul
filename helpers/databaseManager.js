@@ -41,7 +41,7 @@ const sqlServer =
          req.query(query).then(function(recordset)
          {
             conn.close();
-            callback(recordset.recordset);
+            callback(recordset);
          })
          .catch(function(err)
          {
