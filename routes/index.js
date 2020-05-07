@@ -103,10 +103,20 @@ router.get('/eliminar-carrito/:id', checkAuthenticated, function(req, res)
 
 //ZONA DE PROGRAMACIÓN, aquí se debe de poner todo el contenido de programación para cada una de las páginas que
 //tengan un procesamiento de base de datos, tiendo como método http "post" em lugar de "get"
-router.post('/login', passport.authenticate('local',{
-   successRedirect: "/inicio",
+router.post('/login', passport.authenticate('local', {
    failureRedirect: "/login",
    failureFlash: true
-}));
+}),(req,res,next)=>{
+   console.log(req.user);
+   if(req.user.ADMINISTRADOR == true)
+   {
+      res.redirect('/administrador/inicio');
+   }
+   else 
+   {
+      res.redirect('/inicio');
+   }
+   
+});
 
 module.exports = router;

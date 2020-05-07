@@ -5,6 +5,7 @@ const session = require('express-session')
 const app = express();
 const sql = require('./helpers/databaseManager');
 const rutaIndex = require('./routes/index');
+const rutaAdministrador = require('./routes/administrador');
 const bodyParser = require('body-parser');
 const passportLocal = require('passport-local').Strategy;
 //Se inicializa puerto 
@@ -58,6 +59,7 @@ passport.deserializeUser(function(id, done)
 app.use(express.static('public'));
 app.set('view engine', 'ejs');
 app.use('/', rutaIndex);
+app.use('/administrador', rutaAdministrador);
 
 
 //Se inicia el servidor y se envia aviso
