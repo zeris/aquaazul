@@ -8,6 +8,13 @@
     </head>
     <body>
         <%- include('./partials/navbar'); %>
+        <%- include('./partials/menu-usuarios'); %>
+        <% if(alertaModulos) { %>
+            <div class="alert alert-info">
+                <button class="close" data-dismiss="alert"><span>&times;</span></button>
+                <%= mensajeAlertaModulos %>
+            </div>
+        <% } %>
         <h1>Administrar usuarios</h1>
         <h2>Hola <%= administrador.NOMBRE + ' ' + administrador.APELLIDO_P%></h2>
     </body>
