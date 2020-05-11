@@ -1,0 +1,15 @@
+<% for(const usuario of usuarios) { %>
+    <div class="row">
+        <div class="col-12">
+            <div class="col-8">
+                <h4> <%= usuario.NOMBRE + ' ' + usuario.APELLIDO_P + ' ' + usuario.APELLIDO_M %> </h4>
+            </div>
+            <div class="col-2">
+                <a href="/administrador/usuarios/actualizar/<%= usuario.ID_USUARIO %>">Actualizar</a>
+            </div>
+            <div class="col-2">
+                <a href="/administrador/usuarios/eliminar/<%= usuario.ID_USUARIO %>">Eliminar</a>    
+            </div>     
+        </div>
+    </div>
+<% } %>

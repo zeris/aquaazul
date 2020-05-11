@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Aqua azul - Crear Usuario</title>
+        <title>Aqua azul - Actualizar Usuario</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
         <%- include('./partials/head'); %>
@@ -9,43 +9,36 @@
     <body>
         <%- include('./partials/navbar'); %>
         <%- include('./partials/menu-usuarios'); %>
-        <form class="container" action="./crear" method="POST">
+        <form class="container" action="/administrador/usuarios/actualizar/<%= usuario.ID_USUARIO %>" method="POST">
             <div class="row">
                <div class="col-12">
                   <h5>Nombre</h5>
-                  <input type="text" name="nombre"/>
+                  <input type="text" name="nombre" value="<%= usuario.NOMBRE %>"/>
                </div>
             </div>
             <div class="row">
                 <div class="col-12">
                    <h5>Apellido Paterno</h5>
-                   <input type="text" name="apellidoPaterno"/>
+                   <input type="text" name="apellidoPaterno" value="<%= usuario.APELLIDO_P %>"/>
                 </div>
              </div>
              <div class="row">
                 <div class="col-12">
                    <h5>Apellido Materno</h5>
-                   <input type="text" name="apellidoMaterno"/>
+                   <input type="text" name="apellidoMaterno" value="<%= usuario.APELLIDO_M %>"/>
                 </div>
              </div>
              <div class="row">
                 <div class="col-12">
                    <h5>Email</h5>
-                   <input type="text" name="email"/>
+                   <input type="text" name="email" value="<%= usuario.EMAIL%>"/>
                 </div>
              </div>
             <div class="row">
                <div class="col-12">
-                  <h5>Contraseña</h5>
-                  <input type="password" name="password"/>
+                  <input type="submit" value="Actualizar Usuario"/>
                </div>
-            </div>
-            <div class="row">
-               <div class="col-12">
-                  <input type="submit" value="Crear Usuario"/>
-               </div>
-            </div>
-            
+            </div>          
         </form>
     </body>
 </html>

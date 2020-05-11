@@ -6,23 +6,26 @@ const sql = require('../helpers/databaseManager');
 let alertaModulos=false;
 let mensajeAlertaModulos="";
 
+let busquedaUsuarios=false;
+let usuarios=null;
+
 router.get('/inicio', function(req,res,next)
 {
     res.render('Administrador/inicio', {administrador:req.user})
-
 });
 
 router.get('/usuarios', function(req,res,next)
 {
-    res.render('Administrador/usuarios', {administrador:req.user, alertaModulos:alertaModulos, mensajeAlertaModulos:mensajeAlertaModulos})
+    res.render('Administrador/usuarios', {administrador:req.user, alertaModulos:alertaModulos, mensajeAlertaModulos:mensajeAlertaModulos, busquedaUsuarios:busquedaUsuarios, usuarios:usuarios})
     alertaModulos=false;
     mensajeAlertaModulos="";
+    busquedaUsuarios=false;
+    usuarios=null;
 });
 
 router.get('/usuarios/crear', function(req,res,next)
 {
     res.render('Administrador/crear-usuario', {administrador:req.user})
-
 });
 
 router.post('/usuarios/crear', function(req,res,next)
@@ -42,11 +45,60 @@ router.post('/usuarios/crear', function(req,res,next)
         }
         
     })
-
-
 });
 
+router.get('/usuarios/actualizar/:idUsuario', function(req,res,next)
+{
+    let query= "select * from usuario where ID_USUARIO = " + req.params.idUsuario;
+    sql.query(query, (respuestaQuery)=>
+    {
 
+        res.render('Administrador/actualizar-usuario', { usuario:respuestaQuery.recordset[0] });
+    })
+});
+
+router.post('/usuarios/actualizar/:idUsuario', function(req,res,next)
+{
+    let query= "UPDATE USUARIO SET NOMBRE = '" + req.body.nombre + "', APELLIDO_P = '" + req.body.apellidoPaterno + "', " +
+    "APELLIDO_M = '" + req.body.apellidoMaterno + "', EMAIL = '" + req.body.email + "' WHERE ID_USUARIO = " + req.params.idUsuario;
+    
+    sql.query(query, (respuestaQuery)=>
+    {
+        if(respuestaQuery.rowsAffected > 0)
+        {
+            alertaModulos=true;
+            mensajeAlertaModulos="Usuario Actualizado";
+            res.redirect('/administrador/usuarios');
+        }
+        
+    })
+});
+
+router.get('/usuarios/eliminar/:idUsuario', function(req,res,next)
+{
+    let query= "delete from usuario where ID_USUARIO = " + req.params.idUsuario;
+    sql.query(query, (respuestaQuery)=>
+    {
+        if(respuestaQuery.rowsAffected > 0)
+        {
+            alertaModulos=true;
+            mensajeAlertaModulos="Usuario Eliminado";
+            res.redirect('/administrador/usuarios');
+        }        
+    })
+});
+
+router.get('/usuarios/buscar', function(req,res,next)
+{
+    //res.render('Administrador/productos', {administrador:req.user})
+    let query= "select * from usuario where NOMBRE like '%" + req.query.nombreBuscar + "%'";
+    sql.query(query, (respuestaQuery)=>
+    {
+        busquedaUsuarios=true;
+        usuarios=respuestaQuery.recordset;
+        res.redirect('./')
+    })
+});
 
 router.get('/productos', function(req,res,next)
 {
