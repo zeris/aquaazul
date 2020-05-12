@@ -60,7 +60,7 @@ router.get('/usuarios/actualizar/:idUsuario', function(req,res,next)
 router.post('/usuarios/actualizar/:idUsuario', function(req,res,next)
 {
     let query= "UPDATE USUARIO SET NOMBRE = '" + req.body.nombre + "', APELLIDO_P = '" + req.body.apellidoPaterno + "', " +
-    "APELLIDO_M = '" + req.body.apellidoMaterno + "', EMAIL = '" + req.body.email + "' WHERE ID_USUARIO = " + req.params.idUsuario;
+    "APELLIDO_M = '" + req.body.apellidoMaterno + "', EMAIL = '" + req.body.email + "' WHERE ADMINISTRADOR = 'false' and ID_USUARIO = " + req.params.idUsuario;
     
     sql.query(query, (respuestaQuery)=>
     {
@@ -76,7 +76,7 @@ router.post('/usuarios/actualizar/:idUsuario', function(req,res,next)
 
 router.get('/usuarios/eliminar/:idUsuario', function(req,res,next)
 {
-    let query= "delete from usuario where ID_USUARIO = " + req.params.idUsuario;
+    let query= "delete from usuario where ADMINISTRADOR = 'false' and ID_USUARIO = " + req.params.idUsuario;
     sql.query(query, (respuestaQuery)=>
     {
         if(respuestaQuery.rowsAffected > 0)
@@ -91,7 +91,7 @@ router.get('/usuarios/eliminar/:idUsuario', function(req,res,next)
 router.get('/usuarios/buscar', function(req,res,next)
 {
     //res.render('Administrador/productos', {administrador:req.user})
-    let query= "select * from usuario where NOMBRE like '%" + req.query.nombreBuscar + "%'";
+    let query= "select * from usuario where ADMINISTRADOR = 'false' and NOMBRE like '%" + req.query.nombreBuscar + "%'";
     sql.query(query, (respuestaQuery)=>
     {
         busquedaUsuarios=true;
