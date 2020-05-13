@@ -102,8 +102,86 @@ router.get('/usuarios/buscar', function(req,res,next)
 
 router.get('/productos', function(req,res,next)
 {
-    res.render('Administrador/productos', {administrador:req.user})
+    res.render('Administrador/productos', {administrador:req.user, alertaModulos:alertaModulos, mensajeAlertaModulos:mensajeAlertaModulos, busqueda:busqueda, resultadosBusqueda:resultadosBusqueda})
+    alertaModulos=false;
+    mensajeAlertaModulos="";
+    busqueda=false;
+    resultadosBusqueda=null;
+});
 
+router.get('/productos/crear', function(req,res,next)
+{
+    res.render('Administrador/crear-producto', {administrador:req.user})
+});
+
+router.post('/productos/crear', function(req,res,next)
+{
+    console.log(req.body);
+    var query="insert into producto (NOMBRE, PRECIO, CANTIDAD, MARCA, DESCRIPCION) " +
+    "values ('" + req.body.nombre + "', " + req.body.precio + ", " + req.body.cantidad + "," +
+    "'" + req.body.marca + "', '" + req.body.descripcion + "')";
+
+    sql.query(query, (respuestaQuery)=>
+    {
+        if(respuestaQuery.rowsAffected > 0)
+        {
+            alertaModulos=true;
+            mensajeAlertaModulos="Producto Creado";
+            res.redirect('./');
+        }       
+    })
+});
+
+router.get('/productos/actualizar/:idProducto', function(req,res,next)
+{
+    let query= "select * from producto where ID_SKU = " + req.params.idProducto;
+    sql.query(query, (respuestaQuery)=>
+    {
+
+        res.render('Administrador/actualizar-producto', { producto:respuestaQuery.recordset[0] });
+    })
+});
+
+router.post('/productos/actualizar/:idProducto', function(req,res,next)
+{
+    let query= "UPDATE PRODUCTO SET NOMBRE = '" + req.body.nombre + "', PRECIO = " + req.body.precio + ", " +
+    "CANTIDAD = " + req.body.cantidad + ", MARCA = '" + req.body.marca + "', DESCRIPCION = '" + req.body.descripcion + "' WHERE ID_SKU = " + req.params.idProducto;
+    
+    sql.query(query, (respuestaQuery)=>
+    {
+        if(respuestaQuery.rowsAffected > 0)
+        {
+            alertaModulos=true;
+            mensajeAlertaModulos="Producto Actualizado";
+            res.redirect('/administrador/productos');
+        }       
+    })
+});
+
+router.get('/productos/eliminar/:idProducto', function(req,res,next)
+{
+    let query= "delete from producto where ID_SKU = " + req.params.idProducto;
+    sql.query(query, (respuestaQuery)=>
+    {
+        if(respuestaQuery.rowsAffected > 0)
+        {
+            alertaModulos=true;
+            mensajeAlertaModulos="Producto Eliminado";
+            res.redirect('/administrador/productos');
+        }        
+    })
+});
+
+router.get('/productos/buscar', function(req,res,next)
+{
+    //res.render('Administrador/productos', {administrador:req.user})
+    let query= "select * from producto where NOMBRE like '%" + req.query.nombreBuscar + "%'";
+    sql.query(query, (respuestaQuery)=>
+    {
+        busqueda=true;
+        resultadosBusqueda=respuestaQuery.recordset;
+        res.redirect('./')
+    })
 });
 
 router.get('/empleados', function(req,res,next)

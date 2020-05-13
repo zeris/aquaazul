@@ -1,0 +1,15 @@
+<% for(const producto of resultadosBusqueda) { %>
+    <div class="row">
+        <div class="col-12">
+            <div class="col-8">
+                <h4> <%= producto.NOMBRE + ' ' + producto.MARCA + ' ' + producto.DESCRIPCION %> </h4>
+            </div>
+            <div class="col-2">
+                <a href="/administrador/productos/actualizar/<%= producto.ID_SKU %>">Actualizar</a>
+            </div>
+            <div class="col-2">
+                <a href="/administrador/productos/eliminar/<%= producto.ID_SKU %>">Eliminar</a>    
+            </div>     
+        </div>
+    </div>
+<% } %>
