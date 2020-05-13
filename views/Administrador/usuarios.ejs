@@ -17,7 +17,7 @@
         <% } %>
         <h1>Administrar usuarios</h1>
         <h2>Hola <%= administrador.NOMBRE + ' ' + administrador.APELLIDO_P%></h2>
-        <% if(busquedaUsuarios){ %>
+        <% if(busqueda){ %>
             <div class="container">
                 <%- include('./partials/contenedor-usuarios-buscador'); %>
             </div>
