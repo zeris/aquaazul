@@ -109,3 +109,66 @@ ul.topnav li.right {float: right;}
       backdrop-filter: blur(20px);
   }
 }
+
+.height-margin-1
+{
+  margin-top: 1%;
+  margin-bottom: 1%;
+}
+
+.top-card-container
+{
+  height: 255px;
+  border-radius: 8px 8px 0px 0px;
+  border-top: 1px solid rgb(226, 225, 215);
+  border-right: 1px solid rgb(226, 225, 215);
+  border-left: 1px solid rgb(226, 225, 215);
+  box-shadow: 1px 0px 0px 0px #929292;
+  padding: 2px;
+  
+}
+
+.bottom-card-container
+{
+  height: 255px;
+  border-radius: 0px 0px 8px 8px;
+  border-bottom: 1px solid rgb(226, 225, 215);
+  border-right: 1px solid rgb(226, 225, 215);
+  border-left: 1px solid rgb(226, 225, 215);
+  box-shadow: 1px 1px 0px 0px #929292;
+}
+
+.card-image
+{
+  max-height: 255px;
+  max-width: 255px;
+  width: 100%;
+  height: 100%;
+}
+
+@font-face {
+  font-family: "Rosario-Light";
+  src: url(../fonts/Rosario-Light.ttf);
+}
+
+p{
+  font-family: 'Rosario-Light';
+}
+h1{
+  font-family: 'Rosario-Light';
+}
+h2{
+  font-family: 'Rosario-Light';
+}
+h3{
+  font-family: 'Rosario-Light';
+}
+h4{
+  font-family: 'Rosario-Light';
+}
+h5{
+  font-family: 'Rosario-Light';
+}
+h6{
+  font-family: 'Rosario-Light';
+}
