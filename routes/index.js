@@ -20,14 +20,32 @@ router.get('/', function(req, res)
 
 router.get('/login', function(req, res)
 {
-   
    res.render('login');
 });
 
 router.get('/inicio', checkAuthenticated, function(req, res)
 {
-   res.render('inicio');
+   let productos
+   let query = "SELECT TOP 5 * FROM PRODUCTO ORDER BY NEWID()";
+   sql.query(query, (productosInicio) =>
+   {
+      sql.query("SELECT * FROM TIP", (listaTips)=>
+      {
+         console.log(listaTips.recordset);
+         res.render('inicio', { productos: productosInicio.recordset, tips: listaTips.recordset });
+      })
+   })
+  
 });
+
+router.get('/tips/:idTip', checkAuthenticated, function(req, res)
+{
+   sql.query("SELECT * FROM TIP WHERE ID_TIP = " + req.params.idTip, (informacionTip)=>
+   {
+      res.render('tips', { tip: informacionTip.recordset[0] });
+   });
+})
+
 
 //Ya que esta página al terminarse de cargar ya debede de mostrar lista de productos, antes de renderizar la página
 //se obtendra la lista de productos para luego pasarle esa lista al archivo ejs

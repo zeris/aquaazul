@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Aqua azul - <%= tip.TITULO %></title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        <%- include('./partials/head'); %>
+    </head>
+    <body>
+        <%- include('./partials/navbar'); %>
+        <div class="container height-margin-1">
+            <div class="row">
+               <div class="col-12  text-center">
+                  <h1><%= tip.TITULO %></h1>
+               </div>
+            </div>
+            <div class="row text-tip">
+               <%- tip.CUERPO %>
+            </div>
+        </div>
+    </body>
+</html>

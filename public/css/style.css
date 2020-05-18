@@ -129,6 +129,16 @@ ul.topnav li.right {float: right;}
   overflow-x: auto;
 }
 
+.scrollbar-preview-container
+{
+  max-height: 385px;
+  height: 100%;
+  overflow-y: auto;
+  border-top: 1px solid rgb(179, 178, 176);
+  border-right: 1px solid rgb(179, 178, 176);
+  border-left: 1px solid rgb(179, 178, 176);
+}
+
 .shopping-car-container
 {
   border-radius: 8px;
@@ -174,12 +184,132 @@ ul.topnav li.right {float: right;}
   box-shadow: 1px 1px 0px 0px #929292;
 }
 
+.top-preview-card-image-container
+{
+  height: 150px;
+  width: 245.8px;
+  border-radius: 8px 8px 0px 0px;
+  border-top: 1px solid rgb(226, 225, 215);
+  border-right: 1px solid rgb(226, 225, 215);
+  border-left: 1px solid rgb(226, 225, 215);
+  box-shadow: 1px 0px 0px 0px #929292;
+  padding: 2px;
+  
+}
+
+.bottom-preview-card-image-container
+{
+  height: 125px;
+  width: 245.8px;
+  border-radius: 0px 0px 8px 8px;
+  border-bottom: 1px solid rgb(226, 225, 215);
+  border-right: 1px solid rgb(226, 225, 215);
+  border-left: 1px solid rgb(226, 225, 215);
+  box-shadow: 1px 1px 0px 0px #929292;
+}
+
+.preview-card-image
+{
+  max-height: 150px;
+  max-width: 150px;
+  width: 100%;
+  height: 100%;
+}
+
 .card-image
 {
   max-height: 255px;
   max-width: 255px;
   width: 100%;
   height: 100%;
+}
+
+.container-tip {
+  position: relative;
+}
+
+.tip-image {
+  max-height: 150px;
+  width: 100%;
+  height: 100%;
+  opacity: 1;
+  display: block;
+  transition: .5s ease;
+  backface-visibility: hidden;
+}
+.centered {
+  position: absolute;
+  top: 90%;
+  color: white;
+  transform: translate(-50%, -50%);
+}
+
+.middle {
+  transition: .5s ease;
+  opacity: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%)
+}
+
+.container-tip:hover .tip-image {
+  opacity: 0.3;
+}
+
+.container-tip:hover .middle {
+  opacity: 1;
+}
+
+.tip-text {
+  background-color: #4CAF50;
+  color: white;
+  font-size: 16px;
+  padding: 16px 32px;
+}
+
+.text-preview
+{
+  text-align: justify;
+  font-size: 13px;
+}
+
+.text-tip
+{
+  text-align: justify;
+  font-size: 18px;
+  vertical-align: middle;
+  line-height: inherit;
+}
+
+.image-tip
+{
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.space-between-parraphs
+{
+  margin-top: 2%;
+  margin-bottom: 2%;
+}
+
+.button_tip_preview
+{
+  color: black;
+}
+
+.button_tip_preview:hover
+{
+  color: black;
+}
+
+.title-tip-preview
+{
+  font-size: 16px;
+  font-weight: bold;
 }
 
 @font-face {

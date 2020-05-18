@@ -9,7 +9,7 @@
          <p class="card-text" title="<%= listaProductos[i].MARCA %>"><%= listaProductos[i].MARCA.length > 22 ? listaProductos[i].MARCA.slice(0, 19) + "..." : listaProductos[i].MARCA %></p>
          <p class="card-text" title="<%= listaProductos[i].DESCRIPCION %>"><%= listaProductos[i].DESCRIPCION.length > 22 ? listaProductos[i].DESCRIPCION.slice(0, 19) + "..." : listaProductos[i].DESCRIPCION %></p>
          <p class="card-text">$ <%= listaProductos[i].PRECIO%></p>
-         <a href="/agregar-a-carrito/<%= listaProductos[i].ID_SKU %>" class="btn btn-success col-12" target="#exampleModalCenter">Agrergar a carrito de compras</a>
+         <a href="/agregar-a-carrito/<%= listaProductos[i].ID_SKU %>" class="btn btn-success col-12">Agrergar a carrito de compras</a>
       </div>
    </div>
 <%}%>  
