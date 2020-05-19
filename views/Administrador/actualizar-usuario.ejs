@@ -9,36 +9,38 @@
     <body>
         <%- include('./partials/navbar'); %>
         <%- include('./partials/menu-usuarios'); %>
-        <form class="container" action="/administrador/usuarios/actualizar/<%= usuario.ID_USUARIO %>" method="POST">
-            <div class="row">
-               <div class="col-12">
-                  <h5>Nombre</h5>
-                  <input type="text" name="nombre" value="<%= usuario.NOMBRE %>"/>
+        <div class="content">
+            <form class="container" action="/administrador/usuarios/actualizar/<%= usuario.ID_USUARIO %>" method="POST">
+               <div class="row">
+                  <div class="col-12">
+                     <h5>Nombre</h5>
+                     <input type="text" name="nombre" value="<%= usuario.NOMBRE %>"/>
+                  </div>
                </div>
-            </div>
-            <div class="row">
-                <div class="col-12">
-                   <h5>Apellido Paterno</h5>
-                   <input type="text" name="apellidoPaterno" value="<%= usuario.APELLIDO_P %>"/>
-                </div>
-             </div>
-             <div class="row">
-                <div class="col-12">
-                   <h5>Apellido Materno</h5>
-                   <input type="text" name="apellidoMaterno" value="<%= usuario.APELLIDO_M %>"/>
-                </div>
-             </div>
-             <div class="row">
-                <div class="col-12">
-                   <h5>Email</h5>
-                   <input type="text" name="email" value="<%= usuario.EMAIL%>"/>
-                </div>
-             </div>
-            <div class="row">
-               <div class="col-12">
-                  <input type="submit" value="Actualizar Usuario"/>
+               <div class="row">
+                  <div class="col-12">
+                     <h5>Apellido Paterno</h5>
+                     <input type="text" name="apellidoPaterno" value="<%= usuario.APELLIDO_P %>"/>
+                  </div>
                </div>
-            </div>          
-        </form>
+               <div class="row">
+                  <div class="col-12">
+                     <h5>Apellido Materno</h5>
+                     <input type="text" name="apellidoMaterno" value="<%= usuario.APELLIDO_M %>"/>
+                  </div>
+               </div>
+               <div class="row">
+                  <div class="col-12">
+                     <h5>Email</h5>
+                     <input type="text" name="email" value="<%= usuario.EMAIL%>"/>
+                  </div>
+               </div>
+               <div class="row">
+                  <div class="col-12">
+                     <input type="submit" value="Actualizar Usuario"/>
+                  </div>
+               </div>          
+            </form>
+        </div>
     </body>
 </html>

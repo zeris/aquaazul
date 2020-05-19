@@ -1,15 +1,7 @@
-<nav class="navbar navbar-expand-sm bg-dark navbar-dark">
-  
-    <!-- Navbar links -->
-    <div class="collapse navbar-collapse" id="collapsibleNavbar">
-      <ul class="navbar-nav ml-auto">
-        <li class="nav-item"><a class="nav-link active" href="/administrador/usuarios/crear">Crear Usuario</a></li>
-
-        <form class="form-inline" action="/administrador/usuarios/buscar" method="GET">
-            <input class="form-control mr-sm-2" type="search" placeholder="Nombre del usuario a modificar o eliminar" name="nombreBuscar" aria-label="Search">
-            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-        </form>
-
-      </ul>
-    </div>
-  </nav>
+<div class="sidebar">
+  <a class="nav-link active col-12 bottom-margin-3" href="/administrador/usuarios/crear">Crear Usuario</a>
+  <form class="form-inline col-12 left-padding-10px bottom-margin-3" action="/administrador/usuarios/buscar" method="GET">
+    <input class="col-8 form-control mr-sm-2" type="search" placeholder="Nombre del usuario a modificar o eliminar" name="nombreBuscar" aria-label="Search">
+    <button class="col-3 btn btn-outline-success my-2 my-sm-0" type="submit">Buscar</button>
+  </form>
+</div>
