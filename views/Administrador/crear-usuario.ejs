@@ -1,53 +1,63 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Aqua azul - Crear Usuario</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-        <%- include('./partials/head'); %>
-    </head>
-    <body>
-        <%- include('./partials/navbar'); %>
-        <%- include('./partials/menu-usuarios'); %>
-        <div class="content">
-         <form class="container" action="./crear" method="POST">
-            <div class="row">
-               <div class="col-12">
-                  <h5>Nombre</h5>
-                  <input type="text" name="nombre"/>
+   <head>
+      <title>Aqua azul - Crear Usuario</title>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+      <%- include('./partials/head'); %>
+   </head>
+   <body>
+      <%- include('./partials/navbar'); %>
+      <div class="row all-area">
+         <div class="col-lg-3 col-md-12 col-12">
+            <%- include('./partials/menu-usuarios'); %>
+         </div>
+         <div class="col-lg-9 col-md-12 col-12">
+            <div class="content container">
+               <div class="row justify-content-center top-margin-3">
+                  <h3 class="text-center">Ingrese datos para crear usuario</h3>
                </div>
+               <div class="row justify-content-center top-margin-5">
+                  <form action="./crear" method="POST">
+                     <div class="form-group">
+                        <div class="col-12">
+                           <h5>Nombre</h5>
+                           <input class="form-control" type="text" name="nombre"/>
+                        </div>
+                     </div>
+                     <div class="form-group">
+                        <div class="col-12">
+                           <h5>Apellido Paterno</h5>
+                           <input class="form-control" type="text" name="apellidoPaterno"/>
+                        </div>
+                     </div>
+                     <div class="form-group">
+                        <div class="col-12">
+                           <h5>Apellido Materno</h5>
+                           <input class="form-control" type="text" name="apellidoMaterno"/>
+                        </div>
+                     </div>
+                     <div class="form-group">
+                        <div class="col-12">
+                           <h5>Email</h5>
+                           <input class="form-control" type="text" name="email"/>
+                        </div>
+                     </div>
+                     <div class="form-group">
+                        <div class="col-12">
+                           <h5>Contraseña</h5>
+                           <input class="form-control" type="password" name="password"/>
+                        </div>
+                     </div>
+                     <div class="form-group">
+                        <div class="col-12 justify-content-center d-flex">
+                           <input class="btn btn-primary col-12" type="submit" value="Crear Usuario"/>
+                        </div>
+                     </div>
+                  </form>
+               </div> 
             </div>
-            <div class="row">
-                <div class="col-12">
-                   <h5>Apellido Paterno</h5>
-                   <input type="text" name="apellidoPaterno"/>
-                </div>
-             </div>
-             <div class="row">
-                <div class="col-12">
-                   <h5>Apellido Materno</h5>
-                   <input type="text" name="apellidoMaterno"/>
-                </div>
-             </div>
-             <div class="row">
-                <div class="col-12">
-                   <h5>Email</h5>
-                   <input type="text" name="email"/>
-                </div>
-             </div>
-            <div class="row">
-               <div class="col-12">
-                  <h5>Contraseña</h5>
-                  <input type="password" name="password"/>
-               </div>
-            </div>
-            <div class="row">
-               <div class="col-12">
-                  <input type="submit" value="Crear Usuario"/>
-               </div>
-            </div>
-            
-        </form>
-        </div>
-    </body>
+         </div>
+      </div>
+   </body>
 </html>

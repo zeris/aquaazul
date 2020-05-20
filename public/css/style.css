@@ -18,6 +18,11 @@ ul.topnav li a {
   text-decoration: none;
 }
 
+.all-padding-10px
+{
+  padding: 10px;
+}
+
 .background-logo
 {
     background-color: #333;
@@ -55,6 +60,16 @@ ul.topnav li.right {float: right;}
 .top-margin-3
 {
   margin-top: 3%;
+}
+
+.top-margin-5
+{
+  margin-top: 5%;
+}
+
+.text-center
+{
+  text-align: center;
 }
 
 .width-199
@@ -129,6 +144,12 @@ ul.topnav li.right {float: right;}
   margin-bottom: 1%;
 }
 
+.height-margin-2
+{
+  margin-top: 2%;
+  margin-bottom: 2%;
+}
+
 .background-control-carrusel
 {
   height: 10px;
@@ -159,12 +180,84 @@ ul.topnav li.right {float: right;}
   .carrusel-image{ max-height: 245px !important; }
 }
 
+@media (min-width: 768px) and (min-height: 768x)  and (orientation: landscape)
+{
+  .all-area{
+    height:1024px;
+  }
+}
+
 @media (min-width: 992px) {
   .carrusel-image{ max-height: 517px !important; }
 }
 
 @media (min-width: 1000px) {
   .carrusel-image{ max-height: 435px !important; }
+}
+
+@media (min-width: 1009px) and (orientation: portrait) 
+{
+  .all-area{
+    height:1366px;
+  }
+}
+
+@media (min-width: 1009px) and (orientation: landscape) 
+{
+  .all-area{
+    height:720px;
+  }
+}
+
+.right-margin-20px
+{
+  margin-right: 20px;
+}
+
+.solid-border
+{
+  border: 1px solid black;
+}
+
+.right-solid-border
+{
+  border-right: 1px solid black;
+}
+
+.update-button
+{
+  background-color:rgb(25, 190, 108);
+  text-align: center;
+}
+
+.text-button
+{
+  color: white;
+ 
+}
+
+.delete-button
+{
+  background-color:rgb(196, 66, 66);
+  text-align: center;
+}
+
+.update-button:hover
+{
+  background-color:rgb(22, 165, 93);
+  text-align: center;
+}
+
+.text-button:hover
+{
+  color: white;
+  text-decoration: none;
+}
+
+.delete-button:hover
+{
+  background-color:rgb(165, 55, 55);
+  text-align: center;
 }
 
 .scrollbar-container
@@ -389,9 +482,7 @@ h6{
 .sidebar {
   margin: 0;
   padding: 0;
-  width: 300px;
   background-color: #f1f1f1;
-  position: absolute;
   height: 100%;
   overflow: auto;
 }
@@ -424,7 +515,6 @@ h6{
 
 /* Page content. The value of the margin-left property should match the value of the sidebar's width property */
 div.content {
-  margin-left: 300px;
   padding: 1px 16px;
   height: 100%;
 }
