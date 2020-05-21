@@ -4,6 +4,7 @@ const passport = require('passport');
 const sql = require('../helpers/databaseManager');
 //const jwt = require('../helpers/jwt');
 let productoAgregado = false;
+
 function checkAuthenticated(req, res, next) {
    if (req.isAuthenticated()) 
    {
@@ -51,16 +52,50 @@ router.get('/tips/:idTip', checkAuthenticated, function(req, res)
 //se obtendra la lista de productos para luego pasarle esa lista al archivo ejs
 router.get('/listaproductos',checkAuthenticated, function(req, res)
 {
-   sql.query("SELECT * FROM producto", (respuestaQuery)=>
+   res.redirect('/listaproductos/1');
+});
+
+router.get('/listaproductos/:pagina',checkAuthenticated, function(req, res)
+{
+   let query = "SELECT * FROM " +
+   "( "+
+      "SELECT ROW_NUMBER() OVER(ORDER BY ID_SKU) NUM, "+
+      "* FROM PRODUCTO " +
+   ") A " +
+   "WHERE NUM > " + 8 * (req.params.pagina - 1) +" AND NUM <= " + 8 * req.params.pagina;
+   sql.query(query, (respuestaQuery)=>
    {
-      respuestaQuery=respuestaQuery.recordset;
-      let params = {listaProductos: respuestaQuery, productoAgregado: false };
-      if(productoAgregado)
+      sql.query("SELECT COUNT(*) as 'num' FROM PRODUCTO", (numTotalProductos)=>
       {
-         params = {listaProductos: respuestaQuery, productoAgregado: true };
-         productoAgregado = false;
-      }
-      res.render('lista-productos', params);
+         let totalButtonsPagination = numTotalProductos.recordset[0].num / 8;
+         let pagina = parseInt(req.params.pagina)
+         let loadNextButton = true;
+
+         if((pagina % 2) === 1)
+         {
+            maxButtonsPagination = (pagina + 2) > totalButtonsPagination ? totalButtonsPagination : pagina + 2; 
+            minButtonsPagination = pagina;
+         }
+         else
+         {
+            maxButtonsPagination = (pagina + 1) > totalButtonsPagination ? totalButtonsPagination : pagina + 1; ;
+            minButtonsPagination = pagina - 1;
+         }
+
+         if(pagina === totalButtonsPagination)
+         {
+            loadNextButton = false;
+         }
+
+         respuestaQuery=respuestaQuery.recordset;
+         let params = {listaProductos: respuestaQuery, productoAgregado: false, maxButtonsPagination: maxButtonsPagination, minButtonsPagination: minButtonsPagination, currentPage: pagina, loadNextButton: loadNextButton };
+         if(productoAgregado)
+         {
+            params = {listaProductos: respuestaQuery, productoAgregado: true, maxButtonsPagination: maxButtonsPagination, minButtonsPagination: minButtonsPagination, currentPage: pagina, loadNextButton: loadNextButton };
+            productoAgregado = false;
+         }
+         res.render('lista-productos', params);
+      })
    });
 });
 
