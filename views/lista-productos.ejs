@@ -21,45 +21,54 @@
                 </div>
             </div>
             <div class="row height-margin-1">
-                <form class="form-inline col-12 justify-content-center d-flex" action="/administrador/usuarios/buscar" method="GET">
+                <form class="form-inline col-12 justify-content-center d-flex" action="/listaproductos/buscar" method="GET">
                     <input class="form-control mr-sm-2 col-5" type="search" placeholder="Nombre del producto" name="nombreBuscar" aria-label="Search">
                     <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Buscar</button>
                 </form>
             </div>
+            <% if(busqueda == true) { %>
+                <div class="row height-margin-1">
+                    <form class="form-inline col-12 justify-content-center d-flex" action="/listaproductos" method="GET">
+                        <button class="btn btn-danger" type="submit">Cancelar busqueda y ver lista de productos</button>
+                    </form>
+                </div>
+            <% } %>
             <div class="row">
                 <%- include('./partials/producto'); %>
-                <div class="col-12">
-                    <nav aria-label="Page navigation example">
-                        <ul class="pagination justify-content-center">
-                        <% if(currentPage === 1) { %>
-                          <li class="page-item disabled">
-                        <% }else{ %>
-                            <li class="page-item">
-                        <% } %> 
-                            <a class="page-link" tabindex="-1" aria-disabled="true" href="/listaproductos/<%= currentPage - 1 %>">Anterior</a>
-                          </li>
-                          <% for(let i=minButtonsPagination; i<= maxButtonsPagination; i++) { %>
-                            <% if(i === currentPage) { %>
-                                <li class="page-item active" aria-current="page">
-                                    <span class="page-link">
-                                        <%= i %>
-                                        <span class="sr-only">(current)</span>
-                                    </span>
-                                </li>
+                <% if(busqueda != true) { %>
+                    <div class="col-12">
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination justify-content-center">
+                            <% if(currentPage === 1) { %>
+                              <li class="page-item disabled">
                             <% }else{ %>
-                                <li class="page-item"><a class="page-link" href="/listaproductos/<%= i %>"><%= i %></a></li>
-                            <% } %>
-                          <% } %>
-                          <% if(loadNextButton === false) { %>
-                            <li class="page-item disabled">
-                          <% }else{ %>
-                              <li class="page-item">
-                          <% } %> 
-                            <a class="page-link" href="/listaproductos/<%= currentPage + 1 %>">Siguiente</a>
-                          </li>
-                        </ul>
-                      </nav>
-                </div>
+                                <li class="page-item">
+                            <% } %> 
+                                <a class="page-link" tabindex="-1" aria-disabled="true" href="/listaproductos/<%= currentPage - 1 %>">Anterior</a>
+                              </li>
+                              <% for(let i=minButtonsPagination; i<= maxButtonsPagination; i++) { %>
+                                <% if(i === currentPage) { %>
+                                    <li class="page-item active" aria-current="page">
+                                        <span class="page-link">
+                                            <%= i %>
+                                            <span class="sr-only">(current)</span>
+                                        </span>
+                                    </li>
+                                <% }else{ %>
+                                    <li class="page-item"><a class="page-link" href="/listaproductos/<%= i %>"><%= i %></a></li>
+                                <% } %>
+                              <% } %>
+                              <% if(loadNextButton === false) { %>
+                                <li class="page-item disabled">
+                              <% }else{ %>
+                                  <li class="page-item">
+                              <% } %> 
+                                <a class="page-link" href="/listaproductos/<%= currentPage + 1 %>">Siguiente</a>
+                              </li>
+                            </ul>
+                          </nav>
+                    </div>
+                <% } %>  
             </div>
         </div>                      
     </body>

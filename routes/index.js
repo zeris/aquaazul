@@ -55,6 +55,18 @@ router.get('/listaproductos',checkAuthenticated, function(req, res)
    res.redirect('/listaproductos/1');
 });
 
+router.get('/listaproductos/buscar',checkAuthenticated, function(req, res)
+{
+   let query= "select * from producto where NOMBRE like '%" + req.query.nombreBuscar + "%'";
+   sql.query(query, (respuestaQuery)=>
+   {
+      let resultadosBusqueda=respuestaQuery.recordset;
+      let params = {listaProductos: resultadosBusqueda, productoAgregado: false, busqueda: true};
+         
+      res.render('lista-productos', params);
+   })
+});
+
 router.get('/listaproductos/:pagina',checkAuthenticated, function(req, res)
 {
    let query = "SELECT * FROM " +
@@ -88,10 +100,10 @@ router.get('/listaproductos/:pagina',checkAuthenticated, function(req, res)
          }
 
          respuestaQuery=respuestaQuery.recordset;
-         let params = {listaProductos: respuestaQuery, productoAgregado: false, maxButtonsPagination: maxButtonsPagination, minButtonsPagination: minButtonsPagination, currentPage: pagina, loadNextButton: loadNextButton };
+         let params = {listaProductos: respuestaQuery, productoAgregado: false, maxButtonsPagination: maxButtonsPagination, minButtonsPagination: minButtonsPagination, currentPage: pagina, loadNextButton: loadNextButton, busqueda: false };
          if(productoAgregado)
          {
-            params = {listaProductos: respuestaQuery, productoAgregado: true, maxButtonsPagination: maxButtonsPagination, minButtonsPagination: minButtonsPagination, currentPage: pagina, loadNextButton: loadNextButton };
+            params = {listaProductos: respuestaQuery, productoAgregado: true, maxButtonsPagination: maxButtonsPagination, minButtonsPagination: minButtonsPagination, currentPage: pagina, loadNextButton: loadNextButton, busqueda: false };
             productoAgregado = false;
          }
          res.render('lista-productos', params);
