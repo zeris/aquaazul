@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Aqua azul - Crear Producto</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        <%- include('./partials/head'); %>
+    </head>
+    <body>
+        <%- include('./partials/navbar'); %>
+        <%- include('./partials/menu-productos'); %>
+        <form class="container" action="./crear" method="POST">
+            <div class="row">
+               <div class="col-12">
+                  <h5>Nombre</h5>
+                  <input type="text" name="nombre" />
+               </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                   <h5>Precio</h5>
+                   <input type="number" name="precio" />
+                </div>
+             </div>
+             <div class="row">
+                <div class="col-12">
+                   <h5>Cantidad</h5>
+                   <input type="number" name="cantidad" />
+                </div>
+             </div>
+             <div class="row">
+                <div class="col-12">
+                   <h5>Marca</h5>
+                   <input type="text" name="marca" />
+                </div>
+             </div>
+             <div class="row">
+                <div class="col-12">
+                   <h5>Descripción</h5>
+                   <input type="text" name="descripcion" />
+                </div>
+             </div>
+            <div class="row">
+               <div class="col-12">
+                  <input type="submit" value="Crear Producto"/>
+               </div>
+            </div>          
+        </form>
+    </body>
+</html>

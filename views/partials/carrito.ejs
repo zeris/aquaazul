@@ -6,9 +6,9 @@
           <div class="card-body" id="<%= carritoCompras[i].ID_SKU %>">
              <h5 class="card-title"><%= carritoCompras[i].NOMBRE %></h5>
              <p class="card-text"><%= carritoCompras[i].MARCA%></p>
-             <p class="card-text"><%= carritoCompras[i].DESCRIPCION%></p>
+             <p class="card-text"><%= carritoCompras[i].DESCRIPCION%></p>s
              <p class="card-text"><%= carritoCompras[i].PRECIO%></p>
-             <a href="#" class="btn btn-success">Eliminar de carrito</a>
+             <a href="/eliminar-carrito/<%= carritoCompras[i].ID_SKU %>" class="btn btn-success">Eliminar del carrito de compras</a>
           </div>
        </div>
     </div>

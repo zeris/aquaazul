@@ -11,20 +11,10 @@
         <h1>Carrito de compras</h1> 
         <div class="container">
             <div class="row">
-                <div class="col-9">
-                    <%- include('./partials/carrito'); %>
-                </div>
-                <div class="col-3">
-                    <div class="col-12">
-                        <h2>$ <%= totalProductos %> </h2>
-                    </div>
-                    <div class="col-12">
-                        <% if(carritoCompras.length > 0) { %>
-                            <%- include('./partials/paypalBtn'); %>
-                        <% } %>
-                    </div>
-                </div>
+                <%- include('./partials/carrito'); %>
+                <h2><%= totalCompra %></h2>
             </div>
+            <%- include('./partials/buttonPaypal'); %>
         </div>
     </body>
 </html>

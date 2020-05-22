@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Aqua azul - Administrar Usuarios</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        <%- include('./partials/head'); %>
+    </head>
+    <body>
+        <%- include('./partials/navbar'); %>
+        <%- include('./partials/menu-usuarios'); %>
+        <% if(alertaModulos) { %>
+            <div class="alert alert-info">
+                <button class="close" data-dismiss="alert"><span>&times;</span></button>
+                <%= mensajeAlertaModulos %>
+            </div>
+        <% } %>
+        <h1>Administrar usuarios</h1>
+        <h2>Hola <%= administrador.NOMBRE + ' ' + administrador.APELLIDO_P%></h2>
+        <% if(busqueda){ %>
+            <div class="container">
+                <%- include('./partials/contenedor-usuarios-buscador'); %>
+            </div>
+        <% }else{ %>
+            <h3>No se han buscado usuarios</h3>
+        <% } %>
+    </body>
+</html>

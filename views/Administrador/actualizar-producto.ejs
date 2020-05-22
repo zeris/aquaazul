@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Aqua azul - Actualizar Producto</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        <%- include('./partials/head'); %>
+    </head>
+    <body>
+        <%- include('./partials/navbar'); %>
+        <%- include('./partials/menu-productos'); %>
+        <form class="container" action="/administrador/productos/actualizar/<%= producto.ID_SKU %>" method="POST">
+            <div class="row">
+               <div class="col-12">
+                  <h5>Nombre</h5>
+                  <input type="text" name="nombre" value="<%= producto.NOMBRE %>"/>
+               </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                   <h5>Precio</h5>
+                   <input type="number" name="precio" value="<%= producto.PRECIO %>"/>
+                </div>
+             </div>
+             <div class="row">
+                <div class="col-12">
+                   <h5>Cantidad</h5>
+                   <input type="number" name="cantidad" value="<%= producto.CANTIDAD %>"/>
+                </div>
+             </div>
+             <div class="row">
+                <div class="col-12">
+                   <h5>Marca</h5>
+                   <input type="text" name="marca" value="<%= producto.MARCA%>"/>
+                </div>
+             </div>
+             <div class="row">
+                <div class="col-12">
+                   <h5>Descripción</h5>
+                   <input type="text" name="descripcion" value="<%= producto.DESCRIPCION%>"/>
+                </div>
+             </div>
+            <div class="row">
+               <div class="col-12">
+                  <input type="submit" value="Actualizar Producto"/>
+               </div>
+            </div>          
+        </form>
+    </body>
+</html>

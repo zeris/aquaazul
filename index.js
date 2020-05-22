@@ -5,6 +5,7 @@ const session = require('express-session')
 const app = express();
 const sql = require('./helpers/databaseManager');
 const rutaIndex = require('./routes/index');
+const rutaAdministrador = require('./routes/administrador');
 const bodyParser = require('body-parser');
 const passportLocal = require('passport-local').Strategy;
 //Se inicializa puerto 
@@ -24,8 +25,9 @@ app.use(passport.initialize());
 app.use(passport.session());
 passport.use(new passportLocal(function(username, password, done)
 {
-    sql.query("SELECT * FROM USUARIO WHERE EMAIL = '" + username + "' AND CONTRASENIA = '" + password + "'", function(usuario)
+    sql.query("SELECT * FROM USUARIO WHERE EMAIL = '" + username + "' AND CONTRASENIA = '" + password + "'", function(user)
     {
+        let usuario=user.recordset;
         if(usuario.length > 0)
         {
             return done(null, usuario[0]);
@@ -42,8 +44,9 @@ passport.serializeUser(function(user, done)
 
 passport.deserializeUser(function(id, done)
 {
-    sql.query("SELECT * FROM USUARIO WHERE ID_USUARIO = " + id, function(usuario)
+    sql.query("SELECT * FROM USUARIO WHERE ID_USUARIO = " + id, function(user)
     {
+        let usuario=user.recordset;
         if(usuario.length > 0)
         {
             return done(null, usuario[0]);
@@ -56,6 +59,7 @@ passport.deserializeUser(function(id, done)
 app.use(express.static('public'));
 app.set('view engine', 'ejs');
 app.use('/', rutaIndex);
+app.use('/administrador', rutaAdministrador);
 
 
 //Se inicia el servidor y se envia aviso

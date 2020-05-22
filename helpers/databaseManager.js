@@ -5,12 +5,12 @@ const sqlConfig =
 {
    local : 
    {
-      //user: 'fernanda',
-      //password: '12345',
-      //server: 'DESKTOP-S44R409\\SQLEXPRESS',
-      user: 'sa',
-      password: 'a1',
-      server: 'LAPTOP-UCMMQ8CB\\SQLEXPRESS',  
+      user: 'fernanda',
+      password: '12345',
+      server: 'DESKTOP-S44R409\\SQLEXPRESS',
+      //user: 'sa',
+      //password: 'a1',
+      //server: 'LAPTOP-UBV74QOR\\SQLEXPRESS',  
       database: 'CARRITO',
       port: 1433
    },
@@ -41,7 +41,7 @@ const sqlServer =
          req.query(query).then(function(recordset)
          {
             conn.close();
-            callback(recordset.recordset);
+            callback(recordset);
          })
          .catch(function(err)
          {

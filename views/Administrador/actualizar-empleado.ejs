@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Aqua azul - Actualizar Empleado</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        <%- include('./partials/head'); %>
+    </head>
+    <body>
+        <%- include('./partials/navbar'); %>
+        <%- include('./partials/menu-empleados'); %>
+        <form class="container" action="/administrador/empleados/actualizar/<%= empleado.ID_USUARIO %>" method="POST">
+            <div class="row">
+               <div class="col-12">
+                  <h5>Nombre</h5>
+                  <input type="text" name="nombre" value="<%= empleado.NOMBRE %>"/>
+               </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                   <h5>Apellido Paterno</h5>
+                   <input type="text" name="apellidoPaterno" value="<%= empleado.APELLIDO_P %>"/>
+                </div>
+             </div>
+             <div class="row">
+                <div class="col-12">
+                   <h5>Apellido Materno</h5>
+                   <input type="text" name="apellidoMaterno" value="<%= empleado.APELLIDO_M %>"/>
+                </div>
+             </div>
+             <div class="row">
+                <div class="col-12">
+                   <h5>Email</h5>
+                   <input type="text" name="email" value="<%= empleado.EMAIL%>"/>
+                </div>
+             </div>
+            <div class="row">
+               <div class="col-12">
+                  <input type="submit" value="Actualizar Empleado"/>
+               </div>
+            </div>          
+        </form>
+    </body>
+</html>
