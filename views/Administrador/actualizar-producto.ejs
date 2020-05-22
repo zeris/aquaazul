@@ -8,43 +8,55 @@
     </head>
     <body>
         <%- include('./partials/navbar'); %>
-        <%- include('./partials/menu-productos'); %>
-        <form class="container" action="/administrador/productos/actualizar/<%= producto.ID_SKU %>" method="POST">
-            <div class="row">
-               <div class="col-12">
-                  <h5>Nombre</h5>
-                  <input type="text" name="nombre" value="<%= producto.NOMBRE %>"/>
+        <div class="row all-area">
+         <div class="col-lg-3 col-md-12 col-12">
+            <%- include('./partials/menu-productos'); %>
+         </div>
+         <div class="col-lg-9 col-md-12 col-12">
+            <div class="content container">
+               <div class="row justify-content-center top-margin-3">
+                  <h3 class="text-center">Ingrese los datos a modificar del usuario</h3>
+               </div>
+               <div class="row justify-content-center top-margin-5">
+                  <form action="/administrador/productos/actualizar/<%= producto.ID_SKU %>" method="POST">
+                     <div class="form-group">
+                        <div class="col-12">
+                           <h5>Nombre</h5>
+                           <input class="form-control" type="text" name="nombre" value="<%= producto.NOMBRE %>"/>
+                        </div>
+                     </div>
+                     <div class="form-group">
+                         <div class="col-12">
+                            <h5>Precio</h5>
+                            <input class="form-control" type="number" name="precio" value="<%= producto.PRECIO %>"/>
+                         </div>
+                      </div>
+                      <div class="form-group">
+                         <div class="col-12">
+                            <h5>Cantidad</h5>
+                            <input class="form-control" type="number" name="cantidad" value="<%= producto.CANTIDAD %>"/>
+                         </div>
+                      </div>
+                      <div class="form-group">
+                         <div class="col-12">
+                            <h5>Marca</h5>
+                            <input class="form-control" type="text" name="marca" value="<%= producto.MARCA%>"/>
+                         </div>
+                      </div>
+                      <div class="form-group">
+                         <div class="col-12">
+                            <h5>Descripción</h5>
+                            <input class="form-control" type="text" name="descripcion" value="<%= producto.DESCRIPCION%>"/>
+                         </div>
+                      </div>
+                     <div class="form-group">
+                        <div class="col-12 justify-content-center d-flex">
+                           <input class="btn btn-primary col-12" type="submit" value="Actualizar Producto"/>
+                        </div>
+                     </div>          
+                 </form>
                </div>
             </div>
-            <div class="row">
-                <div class="col-12">
-                   <h5>Precio</h5>
-                   <input type="number" name="precio" value="<%= producto.PRECIO %>"/>
-                </div>
-             </div>
-             <div class="row">
-                <div class="col-12">
-                   <h5>Cantidad</h5>
-                   <input type="number" name="cantidad" value="<%= producto.CANTIDAD %>"/>
-                </div>
-             </div>
-             <div class="row">
-                <div class="col-12">
-                   <h5>Marca</h5>
-                   <input type="text" name="marca" value="<%= producto.MARCA%>"/>
-                </div>
-             </div>
-             <div class="row">
-                <div class="col-12">
-                   <h5>Descripción</h5>
-                   <input type="text" name="descripcion" value="<%= producto.DESCRIPCION%>"/>
-                </div>
-             </div>
-            <div class="row">
-               <div class="col-12">
-                  <input type="submit" value="Actualizar Producto"/>
-               </div>
-            </div>          
-        </form>
+         </div>
     </body>
 </html>

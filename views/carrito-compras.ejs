@@ -8,13 +8,30 @@
     </head>
     <body>
         <%- include('./partials/navbar'); %>
-        <h1>Carrito de compras</h1> 
-        <div class="container">
-            <div class="row">
-                <%- include('./partials/carrito'); %>
-                <h2><%= totalCompra %></h2>
-            </div>
-            <%- include('./partials/buttonPaypal'); %>
+        <div class="container height-margin-1">
+            <diV class="row">
+                <div class="col-lg-9 col-md-9 col-12 order-md-1 order-2">
+                    <div class="col-12">
+                        <h5>Carrito de compras</h5> 
+                    </div>
+                    <% if(carritoCompras.length > 0) { %>
+                        <div class="col-12 scrollbar-container">
+                            <%- include('./partials/carrito'); %>
+                        </div>
+                    <% }else{ %>
+
+                        <h3 class="col-12">Tu carrito de compras esta vacío, te invitamos a seleccionar un producto</h3>
+                        <img class="col-12" src="/images/carrito-vacio.gif">
+                   <% } %>
+                </div>
+                <div class="col-lg-2 col-md-2 col-12 order-md-2 order-1">
+                    <h4 class="justify-content-center d-flex">Total de compra: $ <%= totalCompra %></h4>
+                    <% if(carritoCompras.length > 0) { %>
+                        <%- include('./partials/buttonPaypal'); %>
+                    <% } %>
+                </div>
+            </diV>
+            
         </div>
     </body>
 </html>

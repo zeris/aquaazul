@@ -8,37 +8,49 @@
     </head>
     <body>
         <%- include('./partials/navbar'); %>
-        <%- include('./partials/menu-usuarios'); %>
-        <form class="container" action="/administrador/usuarios/actualizar/<%= usuario.ID_USUARIO %>" method="POST">
-            <div class="row">
-               <div class="col-12">
-                  <h5>Nombre</h5>
-                  <input type="text" name="nombre" value="<%= usuario.NOMBRE %>"/>
+        <div class="row all-area">
+         <div class="col-lg-3 col-md-12 col-12">
+             <%- include('./partials/menu-usuarios'); %>
+         </div>
+         <div class="col-lg-9 col-md-12 col-12">
+            <div class="content container">
+               <div class="row justify-content-center top-margin-3">
+                  <h3 class="text-center">Ingrese los datos a modificar del usuario</h3>
                </div>
-            </div>
-            <div class="row">
-                <div class="col-12">
-                   <h5>Apellido Paterno</h5>
-                   <input type="text" name="apellidoPaterno" value="<%= usuario.APELLIDO_P %>"/>
-                </div>
-             </div>
-             <div class="row">
-                <div class="col-12">
-                   <h5>Apellido Materno</h5>
-                   <input type="text" name="apellidoMaterno" value="<%= usuario.APELLIDO_M %>"/>
-                </div>
-             </div>
-             <div class="row">
-                <div class="col-12">
-                   <h5>Email</h5>
-                   <input type="text" name="email" value="<%= usuario.EMAIL%>"/>
-                </div>
-             </div>
-            <div class="row">
-               <div class="col-12">
-                  <input type="submit" value="Actualizar Usuario"/>
+               <div class="row justify-content-center top-margin-5">
+                  <form action="/administrador/usuarios/actualizar/<%= usuario.ID_USUARIO %>" method="POST">
+                     <div class="form-group">
+                        <div class="col-12">
+                           <h5>Nombre</h5>
+                           <input class="form-control" type="text" name="nombre" value="<%= usuario.NOMBRE %>"/>
+                        </div>
+                     </div>
+                     <div class="form-group">
+                        <div class="col-12">
+                           <h5>Apellido Paterno</h5>
+                           <input class="form-control" type="text" name="apellidoPaterno" value="<%= usuario.APELLIDO_P %>"/>
+                        </div>
+                     </div>
+                     <div class="form-group">
+                        <div class="col-12">
+                           <h5>Apellido Materno</h5>
+                           <input class="form-control" type="text" name="apellidoMaterno" value="<%= usuario.APELLIDO_M %>"/>
+                        </div>
+                     </div>
+                     <div class="form-group">
+                        <div class="col-12">
+                           <h5>Email</h5>
+                           <input class="form-control" type="text" name="email" value="<%= usuario.EMAIL%>"/>
+                        </div>
+                     </div>
+                     <div class="form-group">
+                        <div class="col-12 justify-content-center d-flex">
+                           <input class="btn btn-primary col-12" type="submit" value="Actualizar Usuario"/>
+                        </div>
+                     </div>          
+                  </form>
                </div>
-            </div>          
-        </form>
+           </div>
+         </div>
     </body>
 </html>
