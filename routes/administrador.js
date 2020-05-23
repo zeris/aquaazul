@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const passport = require('passport');
 const sql = require('../helpers/databaseManager');
+const verificator = require('../handlers/verificator');
 
 let alertaModulos=false;
 let mensajeAlertaModulos="";
@@ -25,26 +26,43 @@ router.get('/usuarios', function(req,res,next)
 
 router.get('/usuarios/crear', function(req,res,next)
 {
-    res.render('Administrador/crear-usuario', {administrador:req.user})
+    res.render('Administrador/crear-usuario', {error: false})
 });
 
-router.post('/usuarios/crear', function(req,res,next)
+router.post('/usuarios/crear', async function(req,res,next)
 {
-    console.log(req.body);
-    var query="insert into usuario (NOMBRE, APELLIDO_P, APELLIDO_M, EMAIL, CONTRASENIA, ADMINISTRADOR) " +
-    "values ('" + req.body.nombre + "', '" + req.body.apellidoPaterno + "', '" + req.body.apellidoMaterno + "'," +
-    "'" + req.body.email + "', '" + req.body.password + "', 'false')";
-
-    sql.query(query, (respuestaQuery)=>
+    let parametrosDeseados =
     {
-        if(respuestaQuery.rowsAffected > 0)
+        nombre : {type: "string", maxLength: 15, minLength: 1},
+        apellidoPaterno : {type: "string", maxLength: 15, minLength: 1},
+        apellidoMaterno : {type: "string", maxLength: 15, minLength: 1},
+        email : {type: "email", maxLength: 30, minLength: 1},
+        password : {type: "string", maxLength: 30, minLength: 1}
+    };
+    
+    try 
+    {
+        await verificator.Validate(parametrosDeseados, req.body);
+        var query="insert into usuario (NOMBRE, APELLIDO_P, APELLIDO_M, EMAIL, CONTRASENIA, ADMINISTRADOR) " +
+         "values ('" + req.body.nombre + "', '" + req.body.apellidoPaterno + "', '" + req.body.apellidoMaterno + "'," +
+         "'" + req.body.email + "', '" + req.body.password + "', 'false')";
+
+        sql.query(query, (respuestaQuery)=>
         {
-            alertaModulos=true;
-            mensajeAlertaModulos="Usuario Creado";
-            res.redirect('./');
-        }
-        
-    })
+            if(respuestaQuery.rowsAffected > 0)
+            {
+                alertaModulos=true;
+                mensajeAlertaModulos="Usuario Creado";
+                res.redirect('./');
+            }
+            
+        }) 
+    } 
+    catch (error) 
+    {
+        console.log(error);
+        res.render('Administrador/crear-usuario', {error: true, mensajeError: 'El campo ' + error.propertyName + ' es incorrecto'});
+    }
 });
 
 router.get('/usuarios/actualizar/:idUsuario', function(req,res,next)
