@@ -32,7 +32,6 @@ router.get('/inicio', checkAuthenticated, function(req, res)
    {
       sql.query("SELECT * FROM TIP", (listaTips)=>
       {
-         console.log(listaTips.recordset);
          res.render('inicio', { productos: productosInicio.recordset, tips: listaTips.recordset });
       })
    })
@@ -111,18 +110,16 @@ router.get('/listaproductos/:pagina',checkAuthenticated, function(req, res)
    });
 });
 
-router.get('/carritocompras', function(req, res)
+router.get('/carritocompras', checkAuthenticated, function(req, res)
 {
    sql.query("SELECT PRODUCTO.ID_SKU, NOMBRE, MARCA, DESCRIPCION, PRECIO FROM CARRITO INNER JOIN PRODUCTO ON CARRITO.ID_SKU = PRODUCTO.ID_SKU WHERE ID_USUARIO="+req.user.ID_USUARIO, function(carrito1)
    {
       let carrito=carrito1.recordset;
-      console.log(carrito);
       var totalCompra=0;
       for(const prodCarrito of carrito)
       {
          totalCompra+= prodCarrito.PRECIO;
       }
-      console.log(totalCompra);
       res.render('carrito-compras', {carritoCompras:carrito, totalCompra:totalCompra});
    });
    
@@ -130,7 +127,6 @@ router.get('/carritocompras', function(req, res)
 
 router.get('/agregar-a-carrito/:id', checkAuthenticated, function(req, res)
 {
-   console.log(req.params.id);
    let query = "IF (SELECT COUNT(*) FROM CARRITO WHERE ID_SKU = " + req.params.id + " AND ID_USUARIO = " + req.user.ID_USUARIO + ") = 1 " +
    "BEGIN " +
       "UPDATE CARRITO SET CANTIDAD = CANTIDAD + 1 WHERE  ID_SKU = " + req.params.id + " AND ID_USUARIO = " + req.user.ID_USUARIO + " " +
@@ -149,12 +145,9 @@ router.get('/agregar-a-carrito/:id', checkAuthenticated, function(req, res)
 
 router.get('/eliminar-carrito/:id', checkAuthenticated, function(req, res)
 {
-   console.log(req.params.id);
    let query= "DELETE FROM CARRITO WHERE ID_SKU= " + req.params.id  + " AND ID_USUARIO= " + req.user.ID_USUARIO;
    sql.query(query, (respuestaQuery)=>
    {
-      console.log(respuestaQuery)
-      //productoAgregado = true;
       if(respuestaQuery.rowsAffected > 0)
       {
          res.redirect('/carritocompras');
@@ -164,7 +157,39 @@ router.get('/eliminar-carrito/:id', checkAuthenticated, function(req, res)
    });
 });
 
-
+router.get('/finalizarventa', checkAuthenticated, function(req, res)
+{
+   let query = "INSERT INTO HISTORIAL_COMPRA (ID_SKU, ID_USUARIO, CANTIDAD) SELECT ID_SKU, ID_USUARIO, CANTIDAD FROM CARRITO WHERE ID_USUARIO = " + req.user.ID_USUARIO;
+   sql.query(query, (respuestaQuery) =>
+   {
+      if(respuestaQuery.rowsAffected > 0)
+      {
+         query = "SELECT ID_SKU, ID_USUARIO, CANTIDAD FROM CARRITO WHERE ID_USUARIO = " + req.user.ID_USUARIO;
+         sql.query(query, (respuestaQuery)=>
+         {
+            for(const productoComprado of respuestaQuery.recordset)
+            {
+               query = "UPDATE PRODUCTO SET CANTIDAD = CANTIDAD - " + productoComprado.CANTIDAD + " WHERE ID_SKU = " + productoComprado.ID_SKU;
+               sql.query(query, (respuestaQuery)=>
+               {
+                  if(respuestaQuery.rowsAffected == 0)
+                  {
+                     console.log("Hubo un error");
+                  }
+               });
+            }
+            query = "DELETE FROM CARRITO WHERE ID_USUARIO = " + req.user.ID_USUARIO;
+            sql.query(query, (respuestaQuery)=>
+            {
+               if(respuestaQuery.rowsAffected > 0)
+               {
+                  res.redirect('/inicio');
+               }
+            });
+         });
+      }      
+   });
+});
 
 //ZONA DE PROGRAMACIÓN, aquí se debe de poner todo el contenido de programación para cada una de las páginas que
 //tengan un procesamiento de base de datos, tiendo como método http "post" em lugar de "get"
@@ -172,7 +197,6 @@ router.post('/login', passport.authenticate('local', {
    failureRedirect: "/login",
    failureFlash: true
 }),(req,res,next)=>{
-   console.log(req.user);
    if(req.user.ADMINISTRADOR == true)
    {
       res.redirect('/administrador/inicio');
