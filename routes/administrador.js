@@ -9,8 +9,8 @@ const fs = require('fs');
 
 
 let alertaModulos=false;
+let alertaError=false;
 let mensajeAlertaModulos="";
-
 let busqueda=false;
 let resultadosBusqueda=null;
 
@@ -23,28 +23,29 @@ function checkAuthenticated(req, res, next)
     res.redirect("/login");
 }
 
-router.get('/inicio', function(req,res,next)
+router.get('/inicio', checkAuthenticated, function(req,res,next)
 {
     res.render('Administrador/inicio', {administrador:req.user})
 });
 
-router.get('/usuarios', function(req,res,next)
+router.get('/usuarios', checkAuthenticated, function(req,res,next)
 {
-    res.render('Administrador/usuarios', {administrador:req.user, alertaModulos:alertaModulos, mensajeAlertaModulos:mensajeAlertaModulos, busqueda:busqueda, resultadosBusqueda:resultadosBusqueda})
+    res.render('Administrador/usuarios', {administrador:req.user, alertaModulos:alertaModulos, mensajeAlertaModulos:mensajeAlertaModulos, busqueda:busqueda, resultadosBusqueda:resultadosBusqueda, error: alertaError, mensajeError: mensajeAlertaModulos})
     alertaModulos=false;
+    alertaError=false;
     mensajeAlertaModulos="";
     busqueda=false;
     resultadosBusqueda=null;
 });
 
-router.get('/usuarios/crear', function(req,res,next)
+router.get('/usuarios/crear', checkAuthenticated, function(req,res,next)
 {
-    res.render('Administrador/crear-usuario', {error: alertaModulos, mensajeError: mensajeAlertaModulos});
-    alertaModulos = false;
+    res.render('Administrador/crear-usuario', {error: alertaError, mensajeError: mensajeAlertaModulos});
+    alertaError = false;
     mensajeAlertaModulos = "";
 });
 
-router.post('/usuarios/crear', async function(req,res,next)
+router.post('/usuarios/crear', checkAuthenticated, async function(req,res,next)
 {
     let parametrosDeseados =
     {
@@ -70,38 +71,55 @@ router.post('/usuarios/crear', async function(req,res,next)
                 mensajeAlertaModulos="Usuario Creado";
                 res.redirect('./');
             }
+            else
+            {
+                alertaError = true;
+                mensajeAlertaModulos = "Hubo un error al intentar crear al usuario";
+                res.redirect('/administrador/usuarios/crear');
+            }
         });
     } 
     catch (error) 
     {
         if(error.hasOwnProperty('expectedMaxLength'))
         {
-            alertaModulos = true;
+            alertaError = true;
             mensajeAlertaModulos = 'El campo ' + error.propertyName + ' es incorrecto su tamaño máximo es de ' + error.expectedMaxLength + " carácteres";
             res.redirect('/administrador/usuarios/crear');
         }
         else
         {
-            alertaModulos = true;
+            alertaError = true;
             mensajeAlertaModulos = 'El campo ' + error.propertyName + ' es incorrecto';
             res.redirect('/administrador/usuarios/crear');
         }
     }
 });
 
-router.get('/usuarios/actualizar/:idUsuario', function(req,res,next)
+router.get('/usuarios/actualizar/:idUsuario', checkAuthenticated, function(req,res,next)
 {
     let query= "select * from usuario where ID_USUARIO = " + req.params.idUsuario;
     sql.query(query, (respuestaQuery)=>
     {
-
-        res.render('Administrador/actualizar-usuario', { usuario:respuestaQuery.recordset[0], error: alertaModulos, mensajeError : mensajeAlertaModulos });
-        alertaModulos = false;
-        mensajeError = "";
+        console.log(respuestaQuery)
+        if(respuestaQuery.recordset.length > 0)
+        {
+            console.log("1");
+            res.render('Administrador/actualizar-usuario', { usuario:respuestaQuery.recordset[0], error: alertaError, mensajeError : mensajeAlertaModulos });
+            alertaError = false;
+            mensajeAlertaModulos = "";
+        }
+        else
+        {
+            alertaError = true;
+            console.log("2");
+            mensajeAlertaModulos += " Hubo un error al intentar obtener la información del usuario solicitado";
+            res.redirect('/administrador/usuarios');
+        }
     })
 });
 
-router.post('/usuarios/actualizar/:idUsuario', async function(req,res,next)
+router.post('/usuarios/actualizar/:idUsuario', checkAuthenticated, async function(req,res,next)
 {
     let parametrosDeseados =
     {
@@ -109,7 +127,6 @@ router.post('/usuarios/actualizar/:idUsuario', async function(req,res,next)
         apellidoPaterno : {type: "string", maxLength: 15, minLength: 1},
         apellidoMaterno : {type: "string", maxLength: 15, minLength: 1},
         email : {type: "email", maxLength: 30, minLength: 1},
-        password : {type: "string", maxLength: 30, minLength: 1}
     };
 
     try
@@ -126,26 +143,32 @@ router.post('/usuarios/actualizar/:idUsuario', async function(req,res,next)
                 mensajeAlertaModulos="Usuario Actualizado";
                 res.redirect('/administrador/usuarios');
             }
+            else
+            {
+                alertaError = true;
+                mensajeAlertaModulos = "Hubo un error al intentar actualizar el usuario.";
+                res.redirect('/administrador/usuarios/actualizar/' + req.params.idUsuario);
+            }
         })
     }
     catch(error)
     {
         if(error.hasOwnProperty('expectedMaxLength'))
         {
-            alertaModulos = true;
+            alertaError = true;
             mensajeAlertaModulos = 'El campo ' + error.propertyName + ' es incorrecto su tamaño máximo es de ' + error.expectedMaxLength + " carácteres";
             res.redirect('/administrador/usuarios/actualizar/' + req.params.idUsuario);
         }
         else
         {
-            alertaModulos = true;
+            alertaError = true;
             mensajeAlertaModulos = 'El campo ' + error.propertyName + ' es incorrecto';
             res.redirect('/administrador/usuarios/actualizar/' + req.params.idUsuario);
         }
     }
 });
 
-router.get('/usuarios/eliminar/:idUsuario', function(req,res,next)
+router.get('/usuarios/eliminar/:idUsuario', checkAuthenticated, function(req,res,next)
 {
     let query= "delete from usuario where ADMINISTRADOR = 'false' and ID_USUARIO = " + req.params.idUsuario;
     sql.query(query, (respuestaQuery)=>
@@ -155,11 +178,17 @@ router.get('/usuarios/eliminar/:idUsuario', function(req,res,next)
             alertaModulos=true;
             mensajeAlertaModulos="Usuario Eliminado";
             res.redirect('/administrador/usuarios');
-        }        
+        }
+        else
+        {
+            alertaError=true;
+            mensajeAlertaModulos="Hubo un error al intentar eliminar el usuario";
+            res.redirect('/administrador/usuarios');
+        }
     })
 });
 
-router.get('/usuarios/buscar', function(req,res,next)
+router.get('/usuarios/buscar', checkAuthenticated,  function(req,res,next)
 {
     //res.render('Administrador/productos', {administrador:req.user})
     let query= "select * from usuario where ADMINISTRADOR = 'false' and NOMBRE like '%" + req.query.nombreBuscar + "%'";
@@ -173,8 +202,9 @@ router.get('/usuarios/buscar', function(req,res,next)
 
 router.get('/productos', function(req,res,next)
 {
-    res.render('Administrador/productos', {administrador:req.user, alertaModulos:alertaModulos, mensajeAlertaModulos:mensajeAlertaModulos, busqueda:busqueda, resultadosBusqueda:resultadosBusqueda})
+    res.render('Administrador/productos', {administrador:req.user, alertaModulos:alertaModulos, mensajeAlertaModulos:mensajeAlertaModulos, busqueda:busqueda, resultadosBusqueda: resultadosBusqueda, error: alertaError, mensajeError: mensajeAlertaModulos })
     alertaModulos=false;
+    alertaError=false;
     mensajeAlertaModulos="";
     busqueda=false;
     resultadosBusqueda=null;
@@ -182,16 +212,14 @@ router.get('/productos', function(req,res,next)
 
 router.get('/productos/crear', checkAuthenticated, function(req,res,next)
 {
-    res.render('Administrador/crear-producto', { error: alertaModulos, mensajeError: mensajeAlertaModulos });
-    alertaModulos = false;
+    res.render('Administrador/crear-producto', { error: alertaError, mensajeError: mensajeAlertaModulos });
+    alertaError = false;
     mensajeAlertaModulos = "";
 });
 
 router.post('/productos/crear', checkAuthenticated, upload.single('imagen'), async function(req,res,next)
 {
-    let body = Object.create(req.body);
     Object.setPrototypeOf(req.body, Object.prototype);
-    console.log(req.body)
     let parametrosDeseados =
     {
         nombre : {type: "string", maxLength: 15, minLength: 1},
@@ -216,50 +244,76 @@ router.post('/productos/crear', checkAuthenticated, upload.single('imagen'), asy
                 "AND CANTIDAD = " + req.body.cantidad + " AND DESCRIPCION = '" +  req.body.descripcion + "'";
                 sql.query(query, (respuestaQuery)=>
                 {
-                    let basePath =path.dirname(require.main.filename);
-                    fs.rename(basePath + "/temp/" + req.file.filename , basePath + "/public/images/productos/" + respuestaQuery.recordset[0].ID_SKU + ".jpg", (error)=>
+                    if(respuestaQuery.recordset.length > 0)
                     {
-                        if(error)
+                        let basePath =path.dirname(require.main.filename);
+                        fs.rename(basePath + "/temp/" + req.file.filename , basePath + "/public/images/productos/" + respuestaQuery.recordset[0].ID_SKU + ".jpg", (error)=>
                         {
-                            console.log(error);
-                        }
-                        else
-                        {
-                            alertaModulos=true;
-                            mensajeAlertaModulos="Producto Creado";
-                            res.redirect('./');
-                        }
-                    });   
+                            if(error)
+                            {
+                                alertaModalertaErrorulos = true;
+                                mensajeAlertaModulos = "EL producto ha sido guardado, pero hubo un error al intentar renombrar y guardar la imágen";
+                                res.redirect('/administrador/productos/crear');
+                            }
+                            else
+                            {
+                                alertaModulos=true;
+                                mensajeAlertaModulos="Producto Creado";
+                                res.redirect('./');
+                            }
+                        });
+                    }
+                    else
+                    {
+                        alertaError = true;
+                        mensajeAlertaModulos = "EL producto ha sido guardado, pero hubo un error al intentar guardar la imágen";
+                        res.redirect('/administrador/productos/crear');
+                    }
+                       
                 });
-            }       
+            }
+            else
+            {
+                alertaError = true;
+                mensajeAlertaModulos = "Hubo un error al intentar crear al producto";
+                res.redirect('/administrador/productos/crear');
+            }   
         });
     }
     catch(error)
     {
-        console.log(error);
         if(error.hasOwnProperty('expectedMaxLength'))
         {
-            alertaModulos = true;
+            alertaError = true;
             mensajeAlertaModulos = 'El campo ' + error.propertyName + ' es incorrecto su tamaño máximo es de ' + error.expectedMaxLength + " carácteres";
             res.redirect('/administrador/productos/crear');
         }
         else
         {
-            alertaModulos = true;
+            alertaError = true;
             mensajeAlertaModulos = 'El campo ' + error.propertyName + ' es incorrecto';
             res.redirect('/administrador/productos/crear');
         }
     }
 });
 
-router.get('/productos/actualizar/:idProducto',checkAuthenticated, function(req,res,next)
+router.get('/productos/actualizar/:idProducto', checkAuthenticated, function(req,res,next)
 {
     let query= "select * from producto where ID_SKU = " + req.params.idProducto;
     sql.query(query, (respuestaQuery)=>
     {
-        res.render('Administrador/actualizar-producto', { producto:respuestaQuery.recordset[0], error: alertaModulos, mensajeError: mensajeAlertaModulos });
-        alertaModulos = false;
-        mensajeAlertaModulos = "";
+        if(respuestaQuery.recordset.length > 0)
+        {
+            res.render('Administrador/actualizar-producto', { producto:respuestaQuery.recordset[0], error: alertaError, mensajeError: mensajeAlertaModulos });
+            alertaModulos = false;
+            mensajeAlertaModulos = "";
+        }
+        else
+        {
+            alertaError = true;
+            mensajeAlertaModulos += " Hubo un error al intentar obtener la información del producto solicitado";   
+            res.redirect('/administrador/productos');
+        }
     })
 });
 
@@ -289,27 +343,32 @@ router.post('/productos/actualizar/:idProducto', checkAuthenticated, async funct
                 mensajeAlertaModulos="Producto Actualizado";
                 res.redirect('/administrador/productos');
             }       
+            else
+            {
+                alertaError = true;
+                mensajeAlertaModulos = "Hubo un error al intentar actualizar el producto.";
+                res.redirect('/administrador/productos/actualizar/' + req.params.idProducto);
+            }
         });
     }
     catch(error)
     {
-        console.log(error);
         if(error.hasOwnProperty('expectedMaxLength'))
         {
-            alertaModulos = true;
+            alertaError = true;
             mensajeAlertaModulos = 'El campo ' + error.propertyName + ' es incorrecto su tamaño máximo es de ' + error.expectedMaxLength + " carácteres";
             res.redirect('/administrador/productos/actualizar/' + req.params.idProducto);
         }
         else
         {
-            alertaModulos = true;
+            alertaError = true;
             mensajeAlertaModulos = 'El campo ' + error.propertyName + ' es incorrecto';
             res.redirect('/administrador/productos/actualizar/' + req.params.idProducto);
         }
     }
 });
 
-router.get('/productos/eliminar/:idProducto', function(req,res,next)
+router.get('/productos/eliminar/:idProducto', checkAuthenticated, function(req,res,next)
 {
     let query= "delete from producto where ID_SKU = " + req.params.idProducto;
     sql.query(query, (respuestaQuery)=>
@@ -319,11 +378,17 @@ router.get('/productos/eliminar/:idProducto', function(req,res,next)
             alertaModulos=true;
             mensajeAlertaModulos="Producto Eliminado";
             res.redirect('/administrador/productos');
-        }        
+        }
+        else
+        {
+            alertaError=true;
+            mensajeAlertaModulos="Hubo un error al intentar eliminar el producto";
+            res.redirect('/administrador/productos');
+        }
     })
 });
 
-router.get('/productos/buscar', function(req,res,next)
+router.get('/productos/buscar', checkAuthenticated, function(req,res,next)
 {
     //res.render('Administrador/productos', {administrador:req.user})
     let query= "select * from producto where NOMBRE like '%" + req.query.nombreBuscar + "%'";
@@ -335,23 +400,24 @@ router.get('/productos/buscar', function(req,res,next)
     })
 });
 
-router.get('/empleados', function(req,res,next)
+router.get('/empleados', checkAuthenticated, function(req,res,next)
 {
-    res.render('Administrador/empleados', {administrador:req.user, alertaModulos:alertaModulos, mensajeAlertaModulos:mensajeAlertaModulos, busqueda:busqueda, resultadosBusqueda:resultadosBusqueda})
+    res.render('Administrador/empleados', {administrador:req.user, alertaModulos:alertaModulos, mensajeAlertaModulos:mensajeAlertaModulos, busqueda:busqueda, resultadosBusqueda:resultadosBusqueda, error:alertaError, mensajeError: mensajeAlertaModulos})
     alertaModulos=false;
+    alertaError=false;
     mensajeAlertaModulos="";
     busqueda=false;
     resultadosBusqueda=null;
 });
 
-router.get('/empleados/crear', function(req,res,next)
+router.get('/empleados/crear', checkAuthenticated, function(req,res,next)
 {
-    res.render('Administrador/crear-empleado', { error: alertaModulos, mensajeError: mensajeAlertaModulos });
-    alertaModulos = false;
+    res.render('Administrador/crear-empleado', { error: alertaError, mensajeError: mensajeAlertaModulos });
+    alertaError = false;
     mensajeAlertaModulos = "";
 });
 
-router.post('/empleados/crear', async function(req,res,next)
+router.post('/empleados/crear', checkAuthenticated, async function(req,res,next)
 {
     let parametrosDeseados =
     {
@@ -377,39 +443,52 @@ router.post('/empleados/crear', async function(req,res,next)
                 mensajeAlertaModulos="Empleado Creado";
                 res.redirect('./');
             }
-            
+            else
+            {
+                alertaError = true;
+                mensajeAlertaModulos = "Hubo un error al intentar crear a el empleado";
+                res.redirect('/administrador/empleados/crear');
+            }  
         })
     }
     catch(error)
     {
         if(error.hasOwnProperty('expectedMaxLength'))
         {
-            alertaModulos = true;
+            alertaError = true;
             mensajeAlertaModulos = 'El campo ' + error.propertyName + ' es incorrecto su tamaño máximo es de ' + error.expectedMaxLength + " carácteres";
             res.redirect('/administrador/empleados/crear');
         }
         else
         {
-            alertaModulos = true;
+            alertaError = true;
             mensajeAlertaModulos = 'El campo ' + error.propertyName + ' es incorrecto';
             res.redirect('/administrador/empleados/crear');
         }
     }
 });
 
-router.get('/empleados/actualizar/:idEmpleado', function(req,res,next)
+router.get('/empleados/actualizar/:idEmpleado', checkAuthenticated, function(req,res,next)
 {
     let query= "select * from usuario where ADMINISTRADOR = 'true' and ID_USUARIO = " + req.params.idEmpleado;
     sql.query(query, (respuestaQuery)=>
     {
-
-        res.render('Administrador/actualizar-empleado', { empleado:respuestaQuery.recordset[0], error: alertaModulos, mensajeError: mensajeAlertaModulos });
-        alertaModulos = false;
-        mensajeAlertaModulos = "";
+        if(respuestaQuery.recordset.length > 0)
+        {
+            res.render('Administrador/actualizar-empleado', { empleado:respuestaQuery.recordset[0], error: alertaError, mensajeError: mensajeAlertaModulos });
+            alertaError = false;
+            mensajeAlertaModulos = "";
+        }
+        else
+        {
+            alertaError = true;
+            mensajeAlertaModulos += " Hubo un error al intentar obtener la información del empleado solicitado"
+            res.redirect('/administrador/empleados');
+        }
     })
 });
 
-router.post('/empleados/actualizar/:idEmpleado', async function(req,res,next)
+router.post('/empleados/actualizar/:idEmpleado', checkAuthenticated, async function(req,res,next)
 {
     let parametrosDeseados =
     {
@@ -417,7 +496,6 @@ router.post('/empleados/actualizar/:idEmpleado', async function(req,res,next)
         apellidoPaterno : {type: "string", maxLength: 15, minLength: 1},
         apellidoMaterno : {type: "string", maxLength: 15, minLength: 1},
         email : {type: "email", maxLength: 30, minLength: 1},
-        password : {type: "string", maxLength: 30, minLength: 1}
     };
     
     try 
@@ -433,27 +511,33 @@ router.post('/empleados/actualizar/:idEmpleado', async function(req,res,next)
                 alertaModulos=true;
                 mensajeAlertaModulos="Empleado Actualizado";
                 res.redirect('/administrador/empleados');
-            }       
+            }
+            else
+            {
+                alertaError = true;
+                mensajeAlertaModulos = "Hubo un error al intentar actualizar a el empleado";
+                res.redirect('/administrador/empleados/actualizar/' + req.params.idEmpleado);   
+            }
         });
     }
     catch(error)
     {
         if(error.hasOwnProperty('expectedMaxLength'))
         {
-            alertaModulos = true;
+            alertaError = true;
             mensajeAlertaModulos = 'El campo ' + error.propertyName + ' es incorrecto su tamaño máximo es de ' + error.expectedMaxLength + " carácteres";
             res.redirect('/administrador/empleados/actualizar/' + req.params.idEmpleado);
         }
         else
         {
-            alertaModulos = true;
+            alertaError = true;
             mensajeAlertaModulos = 'El campo ' + error.propertyName + ' es incorrecto';
             res.redirect('/administrador/empleados/actualizar/' + req.params.idEmpleado);
         }
     }
 });
 
-router.get('/empleados/eliminar/:idEmpleado', function(req,res,next)
+router.get('/empleados/eliminar/:idEmpleado', checkAuthenticated, function(req,res,next)
 {
     let query= "delete from usuario where ADMINISTRADOR = 'true' and ID_USUARIO = " + req.params.idEmpleado;
     sql.query(query, (respuestaQuery)=>
@@ -463,11 +547,17 @@ router.get('/empleados/eliminar/:idEmpleado', function(req,res,next)
             alertaModulos=true;
             mensajeAlertaModulos="Empleado Eliminado";
             res.redirect('/administrador/empleados');
-        }        
+        }
+        else
+        {
+            alertaError=true;
+            mensajeAlertaModulos="Hubo un error al intentar eliminar a el empleado";
+            res.redirect('/administrador/empleados');
+        }
     })
 });
 
-router.get('/empleados/buscar', function(req,res,next)
+router.get('/empleados/buscar', checkAuthenticated, function(req,res,next)
 {
     //res.render('Administrador/productos', {administrador:req.user})
     let query= "select * from usuario where ADMINISTRADOR = 'true' and NOMBRE like '%" + req.query.nombreBuscar + "%'";

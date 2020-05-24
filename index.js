@@ -1,13 +1,13 @@
 const express = require('express');
 const passport = require('passport')
-const flash = require('express-flash')
+const flash = require('connect-flash');
 const session = require('express-session')
 const app = express();
 const sql = require('./helpers/databaseManager');
 const rutaIndex = require('./routes/index');
 const rutaAdministrador = require('./routes/administrador');
 const bodyParser = require('body-parser');
-const passportLocal = require('passport-local').Strategy;
+const LocalStrategy = require('passport-local');
 //Se inicializa puerto 
 app.set('port', 10000);
 
@@ -23,7 +23,7 @@ app.use(session({
 }));
 app.use(passport.initialize());
 app.use(passport.session());
-passport.use(new passportLocal(function(username, password, done)
+passport.use(new LocalStrategy({passReqToCallback: true}, function(req, username, password, done)
 {
     sql.query("SELECT * FROM USUARIO WHERE EMAIL = '" + username + "' AND CONTRASENIA = '" + password + "'", function(user)
     {
@@ -32,8 +32,9 @@ passport.use(new passportLocal(function(username, password, done)
         {
             return done(null, usuario[0]);
         }
+        console.log(req);
         
-        done(null, false);
+        return done(null, false, req.flash('error', 'El correo o contraseña son incorrectos'));
     });
 }));
 

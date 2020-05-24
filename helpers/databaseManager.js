@@ -45,12 +45,14 @@ const sqlServer =
          })
          .catch(function(err)
          {
+            callback(err);
             console.log(err);
             conn.close();
          })
       })
       .catch(function(err)
       {
+         callback(err)
          console.log(err);
       });
 

@@ -20,6 +20,12 @@
                             <%= mensajeAlertaModulos %>
                         </div>
                     <% } %>
+                    <% if(error) { %>
+                        <div class="alert alert-danger">
+                            <button class="close" data-dismiss="alert"><span>&times;</span></button>
+                            <%= mensajeError %>
+                        </div>
+                    <% } %>
                     <h1 class="text-center">Administrar productos</h1>
                     <% if(busqueda){ %>
                         <h2 class="text-center">Resultados de la busqueda</h2>

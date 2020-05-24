@@ -21,7 +21,24 @@ router.get('/', function(req, res)
 
 router.get('/login', function(req, res)
 {
-   res.render('login');
+   let errors = req.flash().error || [];
+   console.log(errors);
+   res.render('login', { errors });
+});
+
+router.post('/login', passport.authenticate('local', {
+   failureFlash: true,
+   failureRedirect: "/login"
+}),(req,res,next)=>{
+   if(req.user.ADMINISTRADOR == true)
+   {
+      res.redirect('/administrador/inicio');
+   }
+   else 
+   {
+      res.redirect('/inicio');
+   }
+   
 });
 
 router.get('/inicio', checkAuthenticated, function(req, res)
@@ -193,19 +210,6 @@ router.get('/finalizarventa', checkAuthenticated, function(req, res)
 
 //ZONA DE PROGRAMACIÓN, aquí se debe de poner todo el contenido de programación para cada una de las páginas que
 //tengan un procesamiento de base de datos, tiendo como método http "post" em lugar de "get"
-router.post('/login', passport.authenticate('local', {
-   failureRedirect: "/login",
-   failureFlash: true
-}),(req,res,next)=>{
-   if(req.user.ADMINISTRADOR == true)
-   {
-      res.redirect('/administrador/inicio');
-   }
-   else 
-   {
-      res.redirect('/inicio');
-   }
-   
-});
+
 
 module.exports = router;
