@@ -5,12 +5,12 @@ const sqlConfig =
 {
    local : 
    {
-      user: 'fernanda',
-      password: '12345',
-      server: 'DESKTOP-S44R409\\SQLEXPRESS',
-      //user: 'sa',
-      //password: 'a1',
-      //server: 'LAPTOP-UCMMQ8CB\\SQLEXPRESS',  
+      //user: 'fernanda',
+      //password: '12345',
+      //server: 'DESKTOP-S44R409\\SQLEXPRESS',
+      user: 'sa',
+      password: 'a1',
+      server: 'LAPTOP-UCMMQ8CB\\SQLEXPRESS',  
       database: 'CARRITO',
       port: 1433
    },

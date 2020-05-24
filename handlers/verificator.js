@@ -11,6 +11,7 @@ let verificator =
             {
                 if(parameters.hasOwnProperty(valueFormat))
                 {
+                    
                     if(String(parameters[valueFormat]).length < format[valueFormat].minLength)
                     {
                         reject({
@@ -20,20 +21,21 @@ let verificator =
                         });
                     }
                     
-                    if(format.hasOwnProperty("maxLength"))
-                    {
-                        if(parameters[valueFormat].length > format[valueFormat].maxLength)
-                        {
-                            reject({
-                                propertyName: valueFormat,
-                                propertyValue: parameters[valueFormat],
-                                expectedMaxLength: format[valueFormat].maxLength
-                            });
-                        }
-                    }
-
                     switch(format[valueFormat].type)
                     {
+                        case "string":
+                            if(format[valueFormat].hasOwnProperty("maxLength"))
+                            {
+                                if(parameters[valueFormat].length > format[valueFormat].maxLength)
+                                {
+                                    reject({
+                                        propertyName: valueFormat,
+                                        propertyValue: parameters[valueFormat],
+                                        expectedMaxLength: format[valueFormat].maxLength
+                                    });
+                                }
+                            }
+                        break;
                         case "date":
                             let date = moment(parameters[valueFormat], "YYYY-MM-DD", true)
                             if(!date.isValid() || date.format() === "Invalid Date")
@@ -44,7 +46,7 @@ let verificator =
                                     expectedFormat: "YYYY-MM-DD"
                                 });
                             }
-                            if(format.hasOwnProperty("maxDate"))
+                            if(format[valueFormat].hasOwnProperty("maxDate"))
                             {
                                 let maxDate = moment(format[valueFormat], "YYYY-MM-DD").format();
                                 if(date.format() > maxDate)
@@ -56,7 +58,7 @@ let verificator =
                                     });
                                 }
                             }
-                            if(format.hasOwnProperty("minDate"))
+                            if(format[valueFormat].hasOwnProperty("minDate"))
                             {
                                 let minDate = moment(format[valueFormat], "YYYY-MM-DD").format();
                                 if(date.format() < minDate)
@@ -130,7 +132,7 @@ let verificator =
                                 }
                             }
 
-                            if(format.hasOwnProperty("maxValue"))
+                            if(format[valueFormat].hasOwnProperty("maxValue"))
                             {
                                 let maxValue = format[maxValue]
                                 if(parameters[valueFormat] > maxValue)
@@ -143,7 +145,7 @@ let verificator =
                                 }
                             }
 
-                            if(format.hasOwnProperty("minValue"))
+                            if(format[valueFormat].hasOwnProperty("minValue"))
                             {
                                 let minValue = format[minValue]
                                 if(parameters[valueFormat] > minValue)
@@ -166,7 +168,7 @@ let verificator =
                                 });
                             }
         
-                            if(format.hasOwnProperty("maxValue"))
+                            if(format[valueFormat].hasOwnProperty("maxValue"))
                                 {
                                     let maxValue = format[maxValue]
                                     if(parameters[valueFormat] > maxValue)
@@ -179,7 +181,7 @@ let verificator =
                                     }
                                 }
 
-                                if(format.hasOwnProperty("minValue"))
+                                if(format[valueFormat].hasOwnProperty("minValue"))
                                 {
                                     let minValue = format[minValue]
                                     if(parameters[valueFormat] > minValue)
