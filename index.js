@@ -64,4 +64,4 @@ app.use('/administrador', rutaAdministrador);
 
 
 //Se inicia el servidor y se envia aviso
-app.listen(app.get('port'), ()=> console.log("Aqua azul NodeJS listening on Port: ",app.get('port')));
+app.listen(process.env.PORT || 10000, ()=> console.log("Aqua azul NodeJS listening on Port: ", process.env.PORT || 10000));
