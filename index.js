@@ -9,7 +9,7 @@ const rutaAdministrador = require('./routes/administrador');
 const bodyParser = require('body-parser');
 const LocalStrategy = require('passport-local');
 //Se inicializa puerto 
-app.set('port', 10000);
+app.set('port', process.env.PORT || 10000);
 
 //Dependencias necesarias para que el servidor funcione
 app.use(bodyParser.json());
@@ -27,7 +27,8 @@ passport.use(new LocalStrategy({passReqToCallback: true}, function(req, username
 {
     sql.query("SELECT * FROM USUARIO WHERE EMAIL = '" + username + "' AND CONTRASENIA = '" + password + "'", function(user)
     {
-        var usuario = user.recordset;
+        console.log(user);
+        let usuario=user.recordset;
         if(usuario.length > 0)
         {
             return done(null, usuario[0]);
@@ -47,7 +48,7 @@ passport.deserializeUser(function(id, done)
 {
     sql.query("SELECT * FROM USUARIO WHERE ID_USUARIO = " + id, function(user)
     {
-        var usuario=user.recordset;
+        let usuario=user.recordset;
         if(usuario.length > 0)
         {
             return done(null, usuario[0]);
@@ -64,4 +65,4 @@ app.use('/administrador', rutaAdministrador);
 
 
 //Se inicia el servidor y se envia aviso
-app.listen(10000, ()=> console.log("Aqua azul NodeJS listening on Port: ", 10000));
+app.listen(app.get('port'), ()=> console.log("Aqua azul NodeJS listening on Port: ",app.get('port')));

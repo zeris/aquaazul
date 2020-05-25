@@ -49,10 +49,10 @@ router.post('/usuarios/crear', checkAuthenticated, async function(req,res,next)
 {
     let parametrosDeseados =
     {
-        nombre : {type: "string", maxLength: 15, minLength: 1},
-        apellidoPaterno : {type: "string", maxLength: 15, minLength: 1},
-        apellidoMaterno : {type: "string", maxLength: 15, minLength: 1},
-        email : {type: "email", maxLength: 30, minLength: 1},
+        nombre : {type: "string", maxLength: 50, minLength: 1},
+        apellidoPaterno : {type: "string", maxLength: 50, minLength: 1},
+        apellidoMaterno : {type: "string", maxLength: 50, minLength: 1},
+        email : {type: "email", maxLength: 60, minLength: 1},
         password : {type: "string", maxLength: 30, minLength: 1}
     };
     
@@ -123,10 +123,10 @@ router.post('/usuarios/actualizar/:idUsuario', checkAuthenticated, async functio
 {
     let parametrosDeseados =
     {
-        nombre : {type: "string", maxLength: 15, minLength: 1},
-        apellidoPaterno : {type: "string", maxLength: 15, minLength: 1},
-        apellidoMaterno : {type: "string", maxLength: 15, minLength: 1},
-        email : {type: "email", maxLength: 30, minLength: 1},
+        nombre : {type: "string", maxLength: 50, minLength: 1},
+        apellidoPaterno : {type: "string", maxLength: 50, minLength: 1},
+        apellidoMaterno : {type: "string", maxLength: 50, minLength: 1},
+        email : {type: "email", maxLength: 60, minLength: 1},
     };
 
     try
@@ -222,10 +222,10 @@ router.post('/productos/crear', checkAuthenticated, upload.single('imagen'), asy
     Object.setPrototypeOf(req.body, Object.prototype);
     let parametrosDeseados =
     {
-        nombre : {type: "string", maxLength: 15, minLength: 1},
+        nombre : {type: "string", maxLength: 60, minLength: 1},
         precio : {type: "double", minLength: 1},
         cantidad : {type: "int", minLength: 1},
-        marca : {type: "string", maxLength: 15, minLength: 1},
+        marca : {type: "string", maxLength: 60, minLength: 1},
         descripcion : {type: "string", maxLength: 120, minLength: 1}
     };
     
@@ -321,10 +321,10 @@ router.post('/productos/actualizar/:idProducto', checkAuthenticated, async funct
 {
     let parametrosDeseados =
     {
-        nombre : {type: "string", maxLength: 15, minLength: 1},
+        nombre : {type: "string", maxLength: 60, minLength: 1},
         precio : {type: "double", minLength: 1},
         cantidad : {type: "int", minLength: 1},
-        marca : {type: "string", maxLength: 15, minLength: 1},
+        marca : {type: "string", maxLength: 60, minLength: 1},
         descripcion : {type: "string", maxLength: 120, minLength: 1}
     };
     
@@ -421,10 +421,10 @@ router.post('/empleados/crear', checkAuthenticated, async function(req,res,next)
 {
     let parametrosDeseados =
     {
-        nombre : {type: "string", maxLength: 15, minLength: 1},
-        apellidoPaterno : {type: "string", maxLength: 15, minLength: 1},
-        apellidoMaterno : {type: "string", maxLength: 15, minLength: 1},
-        email : {type: "email", maxLength: 30, minLength: 1},
+        nombre : {type: "string", maxLength: 50, minLength: 1},
+        apellidoPaterno : {type: "string", maxLength: 50, minLength: 1},
+        apellidoMaterno : {type: "string", maxLength: 50, minLength: 1},
+        email : {type: "email", maxLength: 60, minLength: 1},
         password : {type: "string", maxLength: 30, minLength: 1}
     };
     
@@ -492,10 +492,10 @@ router.post('/empleados/actualizar/:idEmpleado', checkAuthenticated, async funct
 {
     let parametrosDeseados =
     {
-        nombre : {type: "string", maxLength: 15, minLength: 1},
-        apellidoPaterno : {type: "string", maxLength: 15, minLength: 1},
-        apellidoMaterno : {type: "string", maxLength: 15, minLength: 1},
-        email : {type: "email", maxLength: 30, minLength: 1},
+        nombre : {type: "string", maxLength: 50, minLength: 1},
+        apellidoPaterno : {type: "string", maxLength: 50, minLength: 1},
+        apellidoMaterno : {type: "string", maxLength: 50, minLength: 1},
+        email : {type: "email", maxLength: 60, minLength: 1},
     };
     
     try 
