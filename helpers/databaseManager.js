@@ -16,10 +16,10 @@ const sqlConfig =
    },
    azure :
    {
-      user: 'adminLogin',
-      password: 'admin',
-      server: 'severname.database.windows.net',    // don't add tcp & port number
-      database: 'databaseName',
+      user: 'bgonzalezg1505',
+      password: 'F3rn4nd4#&',
+      server: 'zeris.database.windows.net',    // don't add tcp & port number
+      database: 'FPOO',
       options: 
       {
          encrypt: true
@@ -33,7 +33,7 @@ const sqlServer =
    query: function(query, callback)
    {
       let response = [];
-      let conn = new sql.ConnectionPool(sqlConfig.local);
+      let conn = new sql.ConnectionPool(sqlConfig.azure);
 
       conn.connect().then(function()
       {

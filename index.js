@@ -9,7 +9,7 @@ const rutaAdministrador = require('./routes/administrador');
 const bodyParser = require('body-parser');
 const LocalStrategy = require('passport-local');
 //Se inicializa puerto 
-app.set('port', 10000);
+app.set('port', process.env.PORT || 10000);
 
 //Dependencias necesarias para que el servidor funcione
 app.use(bodyParser.json());
