@@ -9,7 +9,7 @@ const rutaAdministrador = require('./routes/administrador');
 const bodyParser = require('body-parser');
 const LocalStrategy = require('passport-local');
 //Se inicializa puerto 
-app.set('port', process.env.PORT || 10000);
+app.set('port', 10000);
 
 //Dependencias necesarias para que el servidor funcione
 app.use(bodyParser.json());
@@ -64,4 +64,4 @@ app.use('/administrador', rutaAdministrador);
 
 
 //Se inicia el servidor y se envia aviso
-app.listen(process.env.PORT || 10000, ()=> console.log("Aqua azul NodeJS listening on Port: ", process.env.PORT || 10000));
+app.listen(10000, ()=> console.log("Aqua azul NodeJS listening on Port: ", 10000));
