@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Aqua azul - Ver productos</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        <%- include('./partials/head'); %>
+    </head>
+    <body>
+        <%- include('./partials/navbar'); %>
+        <% if(productoAgregado) { %>
+            <div class="alert alert-info">
+                <button class="close" data-dismiss="alert"><span>&times;</span></button>
+                Producto agregado al carrito de compras
+            </div>
+        <% } %>
+        <div class="container">
+            <div class="row height-margin-1">
+                <div class="col-12 justify-content-center d-flex">
+                    <h1>Lista de productos</h1>
+                </div>
+            </div>
+            <div class="row height-margin-1">
+                <form class="form-inline col-12 justify-content-center d-flex" action="/listaproductos/buscar" method="GET">
+                    <input class="form-control mr-sm-2 col-5" type="search" placeholder="Nombre del producto" name="nombreBuscar" aria-label="Search">
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Buscar</button>
+                </form>
+            </div>
+            <% if(busqueda == true) { %>
+                <div class="row height-margin-1">
+                    <form class="form-inline col-12 justify-content-center d-flex" action="/listaproductos" method="GET">
+                        <button class="btn btn-danger" type="submit">Cancelar busqueda y ver lista de productos</button>
+                    </form>
+                </div>
+            <% } %>
+            <div class="row">
+                <%- include('./partials/producto'); %>
+                <% if(busqueda != true) { %>
+                    <div class="col-12">
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination justify-content-center">
+                            <% if(currentPage === 1) { %>
+                              <li class="page-item disabled">
+                            <% }else{ %>
+                                <li class="page-item">
+                            <% } %> 
+                                <a class="page-link" tabindex="-1" aria-disabled="true" href="/listaproductos/<%= currentPage - 1 %>">Anterior</a>
+                              </li>
+                              <% for(let i=minButtonsPagination; i<= maxButtonsPagination; i++) { %>
+                                <% if(i === currentPage) { %>
+                                    <li class="page-item active" aria-current="page">
+                                        <span class="page-link">
+                                            <%= i %>
+                                            <span class="sr-only">(current)</span>
+                                        </span>
+                                    </li>
+                                <% }else{ %>
+                                    <li class="page-item"><a class="page-link" href="/listaproductos/<%= i %>"><%= i %></a></li>
+                                <% } %>
+                              <% } %>
+                              <% if(loadNextButton === false) { %>
+                                <li class="page-item disabled">
+                              <% }else{ %>
+                                  <li class="page-item">
+                              <% } %> 
+                                <a class="page-link" href="/listaproductos/<%= currentPage + 1 %>">Siguiente</a>
+                              </li>
+                            </ul>
+                          </nav>
+                    </div>
+                <% } %>  
+            </div>
+        </div>                      
+    </body>
+</html>

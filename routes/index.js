@@ -1,0 +1,215 @@
+const express = require('express');
+const router = express.Router();
+const passport = require('passport');
+const sql = require('../helpers/databaseManager');
+//const jwt = require('../helpers/jwt');
+let productoAgregado = false;
+
+function checkAuthenticated(req, res, next) {
+   if (req.isAuthenticated()) 
+   {
+     return next();
+   }
+   res.redirect("/login");
+ }
+//ZONA DE RUTAS, aquí se debe el nombre del archivo .ejs (el cual contiene el html) y la ruta en la que se
+//desea mostrar dicha página web.
+router.get('/', function(req, res)
+{
+   res.redirect('login')
+});
+
+router.get('/login', function(req, res)
+{
+   let errors = req.flash().error || [];
+   console.log(errors);
+   res.render('login', { errors });
+});
+
+router.post('/login', passport.authenticate('local', {
+   failureFlash: true,
+   failureRedirect: "/login"
+}),(req,res,next)=>{
+   if(req.user.ADMINISTRADOR == true)
+   {
+      res.redirect('/administrador/inicio');
+   }
+   else 
+   {
+      res.redirect('/inicio');
+   }
+   
+});
+
+router.get('/inicio', checkAuthenticated, function(req, res)
+{
+   let productos
+   let query = "SELECT TOP 5 * FROM PRODUCTO ORDER BY NEWID()";
+   sql.query(query, (productosInicio) =>
+   {
+      sql.query("SELECT * FROM TIP", (listaTips)=>
+      {
+         res.render('inicio', { productos: productosInicio.recordset, tips: listaTips.recordset });
+      })
+   })
+  
+});
+
+router.get('/tips/:idTip', checkAuthenticated, function(req, res)
+{
+   sql.query("SELECT * FROM TIP WHERE ID_TIP = " + req.params.idTip, (informacionTip)=>
+   {
+      res.render('tips', { tip: informacionTip.recordset[0] });
+   });
+})
+
+
+//Ya que esta página al terminarse de cargar ya debede de mostrar lista de productos, antes de renderizar la página
+//se obtendra la lista de productos para luego pasarle esa lista al archivo ejs
+router.get('/listaproductos',checkAuthenticated, function(req, res)
+{
+   res.redirect('/listaproductos/1');
+});
+
+router.get('/listaproductos/buscar',checkAuthenticated, function(req, res)
+{
+   let query= "select * from producto where NOMBRE like '%" + req.query.nombreBuscar + "%'";
+   sql.query(query, (respuestaQuery)=>
+   {
+      let resultadosBusqueda=respuestaQuery.recordset;
+      let params = {listaProductos: resultadosBusqueda, productoAgregado: false, busqueda: true};
+         
+      res.render('lista-productos', params);
+   })
+});
+
+router.get('/listaproductos/:pagina',checkAuthenticated, function(req, res)
+{
+   let query = "SELECT * FROM " +
+   "( "+
+      "SELECT ROW_NUMBER() OVER(ORDER BY ID_SKU) NUM, "+
+      "* FROM PRODUCTO " +
+   ") A " +
+   "WHERE NUM > " + 8 * (req.params.pagina - 1) +" AND NUM <= " + 8 * req.params.pagina;
+   sql.query(query, (respuestaQuery)=>
+   {
+      sql.query("SELECT COUNT(*) as 'num' FROM PRODUCTO", (numTotalProductos)=>
+      {
+         let totalButtonsPagination = numTotalProductos.recordset[0].num / 8;
+         let pagina = parseInt(req.params.pagina)
+         let loadNextButton = true;
+
+         if((pagina % 2) === 1)
+         {
+            maxButtonsPagination = (pagina + 2) > totalButtonsPagination ? totalButtonsPagination : pagina + 2; 
+            minButtonsPagination = pagina;
+         }
+         else
+         {
+            maxButtonsPagination = (pagina + 1) > totalButtonsPagination ? totalButtonsPagination : pagina + 1; ;
+            minButtonsPagination = pagina - 1;
+         }
+
+         if(pagina === totalButtonsPagination)
+         {
+            loadNextButton = false;
+         }
+
+         respuestaQuery=respuestaQuery.recordset;
+         let params = {listaProductos: respuestaQuery, productoAgregado: false, maxButtonsPagination: maxButtonsPagination, minButtonsPagination: minButtonsPagination, currentPage: pagina, loadNextButton: loadNextButton, busqueda: false };
+         if(productoAgregado)
+         {
+            params = {listaProductos: respuestaQuery, productoAgregado: true, maxButtonsPagination: maxButtonsPagination, minButtonsPagination: minButtonsPagination, currentPage: pagina, loadNextButton: loadNextButton, busqueda: false };
+            productoAgregado = false;
+         }
+         res.render('lista-productos', params);
+      })
+   });
+});
+
+router.get('/carritocompras', checkAuthenticated, function(req, res)
+{
+   sql.query("SELECT PRODUCTO.ID_SKU, NOMBRE, MARCA, DESCRIPCION, PRECIO FROM CARRITO INNER JOIN PRODUCTO ON CARRITO.ID_SKU = PRODUCTO.ID_SKU WHERE ID_USUARIO="+req.user.ID_USUARIO, function(carrito1)
+   {
+      let carrito=carrito1.recordset;
+      var totalCompra=0;
+      for(const prodCarrito of carrito)
+      {
+         totalCompra+= prodCarrito.PRECIO;
+      }
+      res.render('carrito-compras', {carritoCompras:carrito, totalCompra:totalCompra});
+   });
+   
+});
+
+router.get('/agregar-a-carrito/:id', checkAuthenticated, function(req, res)
+{
+   let query = "IF (SELECT COUNT(*) FROM CARRITO WHERE ID_SKU = " + req.params.id + " AND ID_USUARIO = " + req.user.ID_USUARIO + ") = 1 " +
+   "BEGIN " +
+      "UPDATE CARRITO SET CANTIDAD = CANTIDAD + 1 WHERE  ID_SKU = " + req.params.id + " AND ID_USUARIO = " + req.user.ID_USUARIO + " " +
+   "END " +
+   "ELSE " +
+   "BEGIN " +
+      "INSERT INTO CARRITO (ID_SKU, ID_USUARIO, CANTIDAD) VALUES (" + req.params.id + ", " + req.user.ID_USUARIO + ", 1) " +
+   "END";
+   sql.query(query, (respuestaQuery)=>
+   {
+      productoAgregado = true;
+      res.redirect('../listaproductos');
+      //sql.query("INSERT INTO CARRITO (ID_SKU, ID_USUARIO) VALUES (" + req.params.id + ", " + req.user.ID_USUARIO + ")")
+   });
+});
+
+router.get('/eliminar-carrito/:id', checkAuthenticated, function(req, res)
+{
+   let query= "DELETE FROM CARRITO WHERE ID_SKU= " + req.params.id  + " AND ID_USUARIO= " + req.user.ID_USUARIO;
+   sql.query(query, (respuestaQuery)=>
+   {
+      if(respuestaQuery.rowsAffected > 0)
+      {
+         res.redirect('/carritocompras');
+      }
+      
+      //sql.query("INSERT INTO CARRITO (ID_SKU, ID_USUARIO) VALUES (" + req.params.id + ", " + req.user.ID_USUARIO + ")")
+   });
+});
+
+router.get('/finalizarventa', checkAuthenticated, function(req, res)
+{
+   let query = "INSERT INTO HISTORIAL_COMPRA (ID_SKU, ID_USUARIO, CANTIDAD) SELECT ID_SKU, ID_USUARIO, CANTIDAD FROM CARRITO WHERE ID_USUARIO = " + req.user.ID_USUARIO;
+   sql.query(query, (respuestaQuery) =>
+   {
+      if(respuestaQuery.rowsAffected > 0)
+      {
+         query = "SELECT ID_SKU, ID_USUARIO, CANTIDAD FROM CARRITO WHERE ID_USUARIO = " + req.user.ID_USUARIO;
+         sql.query(query, (respuestaQuery)=>
+         {
+            for(const productoComprado of respuestaQuery.recordset)
+            {
+               query = "UPDATE PRODUCTO SET CANTIDAD = CANTIDAD - " + productoComprado.CANTIDAD + " WHERE ID_SKU = " + productoComprado.ID_SKU;
+               sql.query(query, (respuestaQuery)=>
+               {
+                  if(respuestaQuery.rowsAffected == 0)
+                  {
+                     console.log("Hubo un error");
+                  }
+               });
+            }
+            query = "DELETE FROM CARRITO WHERE ID_USUARIO = " + req.user.ID_USUARIO;
+            sql.query(query, (respuestaQuery)=>
+            {
+               if(respuestaQuery.rowsAffected > 0)
+               {
+                  res.redirect('/inicio');
+               }
+            });
+         });
+      }      
+   });
+});
+
+//ZONA DE PROGRAMACIÓN, aquí se debe de poner todo el contenido de programación para cada una de las páginas que
+//tengan un procesamiento de base de datos, tiendo como método http "post" em lugar de "get"
+
+
+module.exports = router;

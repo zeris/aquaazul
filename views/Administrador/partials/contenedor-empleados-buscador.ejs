@@ -1,0 +1,17 @@
+<% for(const empleado of resultadosBusqueda) { %>
+    <div class="row all-padding-10px">
+        <div class="col-lg-7 col-12  height-margin-2">
+            <h4> <%= empleado.NOMBRE + ' ' + empleado.APELLIDO_P + ' ' + empleado.APELLIDO_M %> </h4>
+        </div>
+        <div class="col-lg-2 col-12 height-margin-2">
+            <form action="/administrador/empleados/actualizar/<%= empleado.ID_USUARIO %>" method="GET">
+                <input class="btn btn-success col-12" type="submit" value="Actualizar"/>
+            </form>
+        </div>
+        <div class="col-lg-2 col-12 height-margin-2">
+            <form action="/administrador/empleados/eliminar/<%= empleado.ID_USUARIO %>" method="GET">
+                <input class="btn btn-danger col-12" type="submit" value="Eliminar"/>
+            </form>
+        </div>     
+    </div>
+<% } %>

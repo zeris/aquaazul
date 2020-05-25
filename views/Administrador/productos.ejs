@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Aqua azul - Administrar Productos</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        <%- include('./partials/head'); %>
+    </head>
+    <body>
+        <%- include('./partials/navbar'); %>
+        <div class="row all-area">
+            <div class="col-lg-3 col-md-12 col-12">
+                <%- include('./partials/menu-productos'); %>
+            </div>
+            <div class="col-lg-9 col-md-12 col-12">
+                <div class="content">
+                    <% if(alertaModulos) { %>
+                        <div class="alert alert-info">
+                            <button class="close" data-dismiss="alert"><span>&times;</span></button>
+                            <%= mensajeAlertaModulos %>
+                        </div>
+                    <% } %>
+                    <% if(error) { %>
+                        <div class="alert alert-danger">
+                            <button class="close" data-dismiss="alert"><span>&times;</span></button>
+                            <%= mensajeError %>
+                        </div>
+                    <% } %>
+                    <h1 class="text-center">Administrar productos</h1>
+                    <% if(busqueda){ %>
+                        <h2 class="text-center">Resultados de la busqueda</h2>
+                        <div class="container">
+                            <%- include('./partials/contenedor-productos-buscador'); %>
+                        </div>
+                    <% }else{ %>
+                        <h3 class="text-center">No se han buscado productos</h3>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

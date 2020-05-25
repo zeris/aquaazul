@@ -1,0 +1,15 @@
+
+<% for(let i=0; i<listaProductos.length; i++){%>
+   <div class="col-lg-3	col-md-6 col-sm-6 height-margin-1">
+      <div class="col-12 top-card-container justify-content-center d-flex">
+         <img class="card-image" src="/images/productos/<%= listaProductos[i].ID_SKU %>.jpg">
+      </div>
+      <div class="col-12 bottom-card-container">
+         <h5 class="card-title" title="<%= listaProductos[i].NOMBRE %>"><%= listaProductos[i].NOMBRE.length > 20 ? listaProductos[i].NOMBRE.slice(0, 17) + "..." : listaProductos[i].NOMBRE %></h5>
+         <p class="card-text" title="<%= listaProductos[i].MARCA %>"><%= listaProductos[i].MARCA.length > 22 ? listaProductos[i].MARCA.slice(0, 19) + "..." : listaProductos[i].MARCA %></p>
+         <p class="card-text" title="<%= listaProductos[i].DESCRIPCION %>"><%= listaProductos[i].DESCRIPCION.length > 22 ? listaProductos[i].DESCRIPCION.slice(0, 19) + "..." : listaProductos[i].DESCRIPCION %></p>
+         <p class="card-text">$ <%= listaProductos[i].PRECIO%></p>
+         <a href="/agregar-a-carrito/<%= listaProductos[i].ID_SKU %>" class="btn btn-success col-12">Agrergar a carrito de compras</a>
+      </div>
+   </div>
+<%}%>  

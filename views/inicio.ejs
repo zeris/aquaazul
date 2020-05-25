@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Aqua azul - Inicio</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        <%- include('./partials/head'); %>
+    </head>
+    <body>
+        <%- include('./partials/navbar'); %>
+        <div class="container">
+            <div class="row height-margin-3">
+                <%- include('./partials/carrusel'); %>
+            </div>
+            <div class="row">
+                <div class="col-12 text-right">
+                    <a href="listaproductos" class="">Ver lista de productos...</a>
+                </div>
+                
+                <div class="col-12">
+                    <div class="row scrollbar-preview-container flex-row flex-nowrap">
+                        <%- include('./partials/previewProducto'); %>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 text-center">
+                    <h3>Tips de natación</h3>
+                </div>
+                
+                <div class="col-12">
+                    <div class="row scrollbar-preview-container flex-row flex-nowrap">
+                        <%- include('./partials/previewTips'); %>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
