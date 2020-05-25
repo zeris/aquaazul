@@ -27,7 +27,6 @@ passport.use(new LocalStrategy({passReqToCallback: true}, function(req, username
 {
     sql.query("SELECT * FROM USUARIO WHERE EMAIL = '" + username + "' AND CONTRASENIA = '" + password + "'", function(user)
     {
-        console.log(user);
         var usuario = user.recordset;
         if(usuario.length > 0)
         {
@@ -48,7 +47,7 @@ passport.deserializeUser(function(id, done)
 {
     sql.query("SELECT * FROM USUARIO WHERE ID_USUARIO = " + id, function(user)
     {
-        let usuario=user.recordset;
+        var usuario=user.recordset;
         if(usuario.length > 0)
         {
             return done(null, usuario[0]);
