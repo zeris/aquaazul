@@ -65,8 +65,8 @@ router.get('/administrador/inicio', checkAuthenticated, function(req,res,next)
     res.render('Administrador/inicio', {administrador:req.user})
 });
 
-router.use('/administrador', empleadoRutas);
-router.use('/administrador', productosRutas);
-router.use('/administrador', usuarioRutas);
+router.use('/administrador/empleados', empleadoRutas);
+router.use('/administrador/productos', productosRutas);
+router.use('/administrador/usuarios', usuarioRutas);
 
 module.exports = router;

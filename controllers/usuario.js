@@ -12,6 +12,7 @@ const UsuarioControlador =
 
    panelPrincipalUsuarios : function(req, res, next)
    {
+      console.log(UsuarioControlador.resultadosBusqueda);
       let parametrosVista = { administrador: req.user, alertaModulos: UsuarioControlador.alertaModulos, mensajeAlertaModulos: UsuarioControlador.mensajeAlertaModulos, busqueda: UsuarioControlador.busqueda, resultadosBusqueda: UsuarioControlador.resultadosBusqueda, error: UsuarioControlador.alertaError, mensajeError: UsuarioControlador.mensajeAlertaModulos };
       res.render('Administrador/usuarios', parametrosVista);
       UsuarioControlador.alertaModulos = false;
@@ -157,9 +158,10 @@ const UsuarioControlador =
    {
       try
       {
-         let usuariosBuscados = usuarioModelo.buscarUsuariosPorNombre(req.query.nombreBuscar);
+         let usuariosBuscados = await usuarioModelo.buscarUsuariosPorNombre(req.query.nombreBuscar);
          UsuarioControlador.busqueda=true;
          UsuarioControlador.resultadosBusqueda = usuariosBuscados;
+         console.log(UsuarioControlador.resultadosBusqueda);
          res.redirect('./')
       }
       catch(error)
