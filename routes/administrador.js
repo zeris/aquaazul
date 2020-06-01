@@ -59,22 +59,35 @@ router.post('/usuarios/crear', checkAuthenticated, async function(req,res,next)
     try 
     {
         await verificator.Validate(parametrosDeseados, req.body);
-        var query="insert into usuario (NOMBRE, APELLIDO_P, APELLIDO_M, EMAIL, CONTRASENIA, ADMINISTRADOR) " +
-        "values ('" + req.body.nombre + "', '" + req.body.apellidoPaterno + "', '" + req.body.apellidoMaterno + "'," +
-        "'" + req.body.email + "', '" + req.body.password + "', 'false')";
-
+        let query = "SELECT * FROM USUARIO WHERE EMAIL = '" + req.body.email + "'";
         sql.query(query, (respuestaQuery)=>
         {
-            if(respuestaQuery.rowsAffected > 0)
+            if(respuestaQuery.rowsAffected[0] === 0)
             {
-                alertaModulos=true;
-                mensajeAlertaModulos="Usuario Creado";
-                res.redirect('./');
+                query="insert into usuario (NOMBRE, APELLIDO_P, APELLIDO_M, EMAIL, CONTRASENIA, ADMINISTRADOR) " +
+                "values ('" + req.body.nombre + "', '" + req.body.apellidoPaterno + "', '" + req.body.apellidoMaterno + "'," +
+                "'" + req.body.email + "', '" + req.body.password + "', 'false')";
+
+                sql.query(query, (respuestaQuery)=>
+                {
+                    if(respuestaQuery.rowsAffected[0] > 0)
+                    {
+                        alertaModulos=true;
+                        mensajeAlertaModulos="Usuario Creado";
+                        res.redirect('./');
+                    }
+                    else
+                    {
+                        alertaError = true;
+                        mensajeAlertaModulos = "Hubo un error al intentar crear al usuario";
+                        res.redirect('/administrador/usuarios/crear');
+                    }
+                });
             }
             else
             {
                 alertaError = true;
-                mensajeAlertaModulos = "Hubo un error al intentar crear al usuario";
+                mensajeAlertaModulos = "Ya hay un usuario registrado con este correo. Por favor ingrese otro.";
                 res.redirect('/administrador/usuarios/crear');
             }
         });
@@ -101,10 +114,8 @@ router.get('/usuarios/actualizar/:idUsuario', checkAuthenticated, function(req,r
     let query= "select * from usuario where ID_USUARIO = " + req.params.idUsuario;
     sql.query(query, (respuestaQuery)=>
     {
-        console.log(respuestaQuery)
         if(respuestaQuery.recordset.length > 0)
         {
-            console.log("1");
             res.render('Administrador/actualizar-usuario', { usuario:respuestaQuery.recordset[0], error: alertaError, mensajeError : mensajeAlertaModulos });
             alertaError = false;
             mensajeAlertaModulos = "";
@@ -112,11 +123,10 @@ router.get('/usuarios/actualizar/:idUsuario', checkAuthenticated, function(req,r
         else
         {
             alertaError = true;
-            console.log("2");
             mensajeAlertaModulos += " Hubo un error al intentar obtener la información del usuario solicitado";
             res.redirect('/administrador/usuarios');
         }
-    })
+    });
 });
 
 router.post('/usuarios/actualizar/:idUsuario', checkAuthenticated, async function(req,res,next)
@@ -132,24 +142,37 @@ router.post('/usuarios/actualizar/:idUsuario', checkAuthenticated, async functio
     try
     {
         await verificator.Validate(parametrosDeseados, req.body);
-        let query= "UPDATE USUARIO SET NOMBRE = '" + req.body.nombre + "', APELLIDO_P = '" + req.body.apellidoPaterno + "', " +
-        "APELLIDO_M = '" + req.body.apellidoMaterno + "', EMAIL = '" + req.body.email + "' WHERE ADMINISTRADOR = 'false' and ID_USUARIO = " + req.params.idUsuario;
-    
+        let query = "SELECT * FROM USUARIO WHERE EMAIL = '" + req.body.email + "'";
         sql.query(query, (respuestaQuery)=>
         {
-            if(respuestaQuery.rowsAffected > 0)
+            if(respuestaQuery.rowsAffected[0] === 0 || respuestaQuery.recordset[0].ID_USUARIO == req.params.idUsuario)
             {
-                alertaModulos=true;
-                mensajeAlertaModulos="Usuario Actualizado";
-                res.redirect('/administrador/usuarios');
+                let query= "UPDATE USUARIO SET NOMBRE = '" + req.body.nombre + "', APELLIDO_P = '" + req.body.apellidoPaterno + "', " +
+                "APELLIDO_M = '" + req.body.apellidoMaterno + "', EMAIL = '" + req.body.email + "' WHERE ADMINISTRADOR = 'false' and ID_USUARIO = " + req.params.idUsuario;
+            
+                sql.query(query, (respuestaQuery)=>
+                {
+                    if(respuestaQuery.rowsAffected[0] > 0)
+                    {
+                        alertaModulos=true;
+                        mensajeAlertaModulos="Usuario Actualizado";
+                        res.redirect('/administrador/usuarios');
+                    }
+                    else
+                    {
+                        alertaError = true;
+                        mensajeAlertaModulos = "Hubo un error al intentar actualizar el usuario.";
+                        res.redirect('/administrador/usuarios/actualizar/' + req.params.idUsuario);
+                    }
+                });
             }
             else
             {
                 alertaError = true;
-                mensajeAlertaModulos = "Hubo un error al intentar actualizar el usuario.";
+                mensajeAlertaModulos = "No se puede actualizar al usuario, porque otro usuario ya posee ese correo, por favor use otro.";
                 res.redirect('/administrador/usuarios/actualizar/' + req.params.idUsuario);
             }
-        })
+        });
     }
     catch(error)
     {
@@ -173,7 +196,7 @@ router.get('/usuarios/eliminar/:idUsuario', checkAuthenticated, function(req,res
     let query= "delete from usuario where ADMINISTRADOR = 'false' and ID_USUARIO = " + req.params.idUsuario;
     sql.query(query, (respuestaQuery)=>
     {
-        if(respuestaQuery.rowsAffected > 0)
+        if(respuestaQuery.rowsAffected[0] > 0)
         {
             alertaModulos=true;
             mensajeAlertaModulos="Usuario Eliminado";
@@ -200,7 +223,7 @@ router.get('/usuarios/buscar', checkAuthenticated,  function(req,res,next)
     })
 });
 
-router.get('/productos', function(req,res,next)
+router.get('/productos',checkAuthenticated, function(req,res,next)
 {
     res.render('Administrador/productos', {administrador:req.user, alertaModulos:alertaModulos, mensajeAlertaModulos:mensajeAlertaModulos, busqueda:busqueda, resultadosBusqueda: resultadosBusqueda, error: alertaError, mensajeError: mensajeAlertaModulos })
     alertaModulos=false;
@@ -232,53 +255,69 @@ router.post('/productos/crear', checkAuthenticated, upload.single('imagen'), asy
     try 
     {
         await verificator.Validate(parametrosDeseados, req.body);
-        var query="insert into producto (NOMBRE, PRECIO, CANTIDAD, MARCA, DESCRIPCION) " +
-        "values ('" + req.body.nombre + "', " + req.body.precio + ", " + req.body.cantidad + "," +
-        "'" + req.body.marca + "', '" + req.body.descripcion + "')";
+        var query="SELECT * FROM producto " +
+        "WHERE nombre = '" + req.body.nombre + "' AND marca = '" + req.body.marca + "' AND descripcion = '" + req.body.descripcion + "'";
 
         sql.query(query, (respuestaQuery)=>
         {
-            if(respuestaQuery.rowsAffected > 0)
+            if(respuestaQuery.rowsAffected[0] === 0)
             {
-                query = "SELECT ID_SKU FROM PRODUCTO WHERE NOMBRE = '" + req.body.nombre + "' AND MARCA = '" + req.body.marca  + "' AND PRECIO = " + req.body.precio + " " +
-                "AND CANTIDAD = " + req.body.cantidad + " AND DESCRIPCION = '" +  req.body.descripcion + "'";
+                query="insert into producto (NOMBRE, PRECIO, CANTIDAD, MARCA, DESCRIPCION) " +
+                "values ('" + req.body.nombre + "', " + req.body.precio + ", " + req.body.cantidad + "," +
+                "'" + req.body.marca + "', '" + req.body.descripcion + "')";
+
                 sql.query(query, (respuestaQuery)=>
                 {
-                    if(respuestaQuery.recordset.length > 0)
+                    if(respuestaQuery.rowsAffected[0] > 0)
                     {
-                        let basePath =path.dirname(require.main.filename);
-                        fs.rename(basePath + "/temp/" + req.file.filename , basePath + "/public/images/productos/" + respuestaQuery.recordset[0].ID_SKU + ".jpg", (error)=>
+                        query = "SELECT ID_SKU FROM PRODUCTO WHERE NOMBRE = '" + req.body.nombre + "' AND MARCA = '" + req.body.marca  + "' AND PRECIO = " + req.body.precio + " " +
+                        "AND CANTIDAD = " + req.body.cantidad + " AND DESCRIPCION = '" +  req.body.descripcion + "'";
+                        sql.query(query, (respuestaQuery)=>
                         {
-                            if(error)
+                            if(respuestaQuery.recordset.length > 0)
                             {
-                                alertaModalertaErrorulos = true;
-                                mensajeAlertaModulos = "EL producto ha sido guardado, pero hubo un error al intentar renombrar y guardar la imágen";
-                                res.redirect('/administrador/productos/crear');
+                                let basePath =path.dirname(require.main.filename);
+                                fs.rename(basePath + "/temp/" + req.file.filename , basePath + "/public/images/productos/" + respuestaQuery.recordset[0].ID_SKU + ".jpg", (error)=>
+                                {
+                                    if(error)
+                                    {
+                                        alertaModalertaErrorulos = true;
+                                        mensajeAlertaModulos = "EL producto ha sido guardado, pero hubo un error al intentar renombrar y guardar la imágen";
+                                        res.redirect('/administrador/productos/crear');
+                                    }
+                                    else
+                                    {
+                                        alertaModulos=true;
+                                        mensajeAlertaModulos="Producto Creado";
+                                        res.redirect('./');
+                                    }
+                                });
                             }
                             else
                             {
-                                alertaModulos=true;
-                                mensajeAlertaModulos="Producto Creado";
-                                res.redirect('./');
+                                alertaError = true;
+                                mensajeAlertaModulos = "EL producto ha sido guardado, pero hubo un error al intentar guardar la imágen";
+                                res.redirect('/administrador/productos/crear');
                             }
+                            
                         });
                     }
                     else
                     {
                         alertaError = true;
-                        mensajeAlertaModulos = "EL producto ha sido guardado, pero hubo un error al intentar guardar la imágen";
+                        mensajeAlertaModulos = "Hubo un error al intentar crear al producto";
                         res.redirect('/administrador/productos/crear');
-                    }
-                       
+                    }   
                 });
             }
             else
             {
                 alertaError = true;
-                mensajeAlertaModulos = "Hubo un error al intentar crear al producto";
+                mensajeAlertaModulos = "No se puede crear el producto, puesto que ya existe.";
                 res.redirect('/administrador/productos/crear');
-            }   
+            }
         });
+        
     }
     catch(error)
     {
@@ -332,21 +371,36 @@ router.post('/productos/actualizar/:idProducto', checkAuthenticated, async funct
     {
         await verificator.Validate(parametrosDeseados, req.body);
 
-        let query= "UPDATE PRODUCTO SET NOMBRE = '" + req.body.nombre + "', PRECIO = " + req.body.precio + ", " +
-        "CANTIDAD = " + req.body.cantidad + ", MARCA = '" + req.body.marca + "', DESCRIPCION = '" + req.body.descripcion + "' WHERE ID_SKU = " + req.params.idProducto;
-        
+        let query="SELECT * FROM producto " +
+        "WHERE nombre = '" + req.body.nombre + "' AND marca = '" + req.body.marca + "' AND descripcion = '" + req.body.descripcion + "'";
+
         sql.query(query, (respuestaQuery)=>
         {
-            if(respuestaQuery.rowsAffected > 0)
+            if(respuestaQuery.rowsAffected[0] === 0 || respuestaQuery.recordset[0].ID_SKU == req.params.idProducto)
             {
-                alertaModulos=true;
-                mensajeAlertaModulos="Producto Actualizado";
-                res.redirect('/administrador/productos');
-            }       
+                let query= "UPDATE PRODUCTO SET NOMBRE = '" + req.body.nombre + "', PRECIO = " + req.body.precio + ", " +
+                "CANTIDAD = " + req.body.cantidad + ", MARCA = '" + req.body.marca + "', DESCRIPCION = '" + req.body.descripcion + "' WHERE ID_SKU = " + req.params.idProducto;
+                
+                sql.query(query, (respuestaQuery)=>
+                {
+                    if(respuestaQuery.rowsAffected[0] > 0)
+                    {
+                        alertaModulos=true;
+                        mensajeAlertaModulos="Producto Actualizado";
+                        res.redirect('/administrador/productos');
+                    }       
+                    else
+                    {
+                        alertaError = true;
+                        mensajeAlertaModulos = "Hubo un error al intentar actualizar el producto.";
+                        res.redirect('/administrador/productos/actualizar/' + req.params.idProducto);
+                    }
+                });
+            }
             else
             {
                 alertaError = true;
-                mensajeAlertaModulos = "Hubo un error al intentar actualizar el producto.";
+                mensajeAlertaModulos = "No se pudo actualizar el producto, puesto que ya existe un producto existente con dichas características. Intente con otras carácteristicas (nombre, marca y descripción)";
                 res.redirect('/administrador/productos/actualizar/' + req.params.idProducto);
             }
         });
@@ -373,7 +427,7 @@ router.get('/productos/eliminar/:idProducto', checkAuthenticated, function(req,r
     let query= "delete from producto where ID_SKU = " + req.params.idProducto;
     sql.query(query, (respuestaQuery)=>
     {
-        if(respuestaQuery.rowsAffected > 0)
+        if(respuestaQuery.rowsAffected[0] > 0)
         {
             alertaModulos=true;
             mensajeAlertaModulos="Producto Eliminado";
@@ -431,25 +485,38 @@ router.post('/empleados/crear', checkAuthenticated, async function(req,res,next)
     try 
     {
         await verificator.Validate(parametrosDeseados, req.body);
-        var query="insert into usuario (NOMBRE, APELLIDO_P, APELLIDO_M, EMAIL, CONTRASENIA, ADMINISTRADOR) " +
-        "values ('" + req.body.nombre + "', '" + req.body.apellidoPaterno + "', '" + req.body.apellidoMaterno + "'," +
-        "'" + req.body.email + "', '" + req.body.password + "', 'true')";
-
+        let query = "SELECT * FROM USUARIO WHERE EMAIL = '" + req.body.email + "'";
         sql.query(query, (respuestaQuery)=>
         {
-            if(respuestaQuery.rowsAffected > 0)
+            if(respuestaQuery.rowsAffected[0] === 0)
             {
-                alertaModulos=true;
-                mensajeAlertaModulos="Empleado Creado";
-                res.redirect('./');
+                query="insert into usuario (NOMBRE, APELLIDO_P, APELLIDO_M, EMAIL, CONTRASENIA, ADMINISTRADOR) " +
+                "values ('" + req.body.nombre + "', '" + req.body.apellidoPaterno + "', '" + req.body.apellidoMaterno + "'," +
+                "'" + req.body.email + "', '" + req.body.password + "', 'true')";
+
+                sql.query(query, (respuestaQuery)=>
+                {
+                    if(respuestaQuery.rowsAffected[0] > 0)
+                    {
+                        alertaModulos=true;
+                        mensajeAlertaModulos="Empleado Creado";
+                        res.redirect('./');
+                    }
+                    else
+                    {
+                        alertaError = true;
+                        mensajeAlertaModulos = "Hubo un error al intentar crear a el empleado";
+                        res.redirect('/administrador/empleados/crear');
+                    }  
+                });
             }
             else
             {
                 alertaError = true;
-                mensajeAlertaModulos = "Hubo un error al intentar crear a el empleado";
+                mensajeAlertaModulos = "Ya hay un empleado registrado con este correo. Por favor ingrese otro.";
                 res.redirect('/administrador/empleados/crear');
-            }  
-        })
+            }
+        });
     }
     catch(error)
     {
@@ -501,22 +568,35 @@ router.post('/empleados/actualizar/:idEmpleado', checkAuthenticated, async funct
     try 
     {
         await verificator.Validate(parametrosDeseados, req.body);
-        let query= "UPDATE USUARIO SET NOMBRE = '" + req.body.nombre + "', APELLIDO_P = '" + req.body.apellidoPaterno + "', " +
-        "APELLIDO_M = '" + req.body.apellidoMaterno + "', EMAIL = '" + req.body.email + "' WHERE ADMINISTRADOR = 'true' and ID_USUARIO = " + req.params.idEmpleado;
-        
+        let query = "SELECT * FROM USUARIO WHERE EMAIL = '" + req.body.email + "'";
         sql.query(query, (respuestaQuery)=>
         {
-            if(respuestaQuery.rowsAffected > 0)
+            if(respuestaQuery.rowsAffected[0] === 0 || respuestaQuery.recordset[0].ID_USUARIO == req.params.idEmpleado)
             {
-                alertaModulos=true;
-                mensajeAlertaModulos="Empleado Actualizado";
-                res.redirect('/administrador/empleados');
+                let query= "UPDATE USUARIO SET NOMBRE = '" + req.body.nombre + "', APELLIDO_P = '" + req.body.apellidoPaterno + "', " +
+                "APELLIDO_M = '" + req.body.apellidoMaterno + "', EMAIL = '" + req.body.email + "' WHERE ADMINISTRADOR = 'true' and ID_USUARIO = " + req.params.idEmpleado;
+                
+                sql.query(query, (respuestaQuery)=>
+                {
+                    if(respuestaQuery.rowsAffected[0] > 0)
+                    {
+                        alertaModulos=true;
+                        mensajeAlertaModulos="Empleado Actualizado";
+                        res.redirect('/administrador/empleados');
+                    }
+                    else
+                    {
+                        alertaError = true;
+                        mensajeAlertaModulos = "Hubo un error al intentar actualizar a el empleado";
+                        res.redirect('/administrador/empleados/actualizar/' + req.params.idEmpleado);   
+                    }
+                });
             }
             else
             {
                 alertaError = true;
-                mensajeAlertaModulos = "Hubo un error al intentar actualizar a el empleado";
-                res.redirect('/administrador/empleados/actualizar/' + req.params.idEmpleado);   
+                mensajeAlertaModulos = "No se puede actualizar al empleado, porque otro usuario ya posee ese correo, por favor use otro.";
+                res.redirect('/administrador/empleados/actualizar/' + req.params.idEmpleado);
             }
         });
     }
@@ -542,7 +622,7 @@ router.get('/empleados/eliminar/:idEmpleado', checkAuthenticated, function(req,r
     let query= "delete from usuario where ADMINISTRADOR = 'true' and ID_USUARIO = " + req.params.idEmpleado;
     sql.query(query, (respuestaQuery)=>
     {
-        if(respuestaQuery.rowsAffected > 0)
+        if(respuestaQuery.rowsAffected[0] > 0)
         {
             alertaModulos=true;
             mensajeAlertaModulos="Empleado Eliminado";

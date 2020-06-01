@@ -4,6 +4,7 @@
         <title>Aqua azul - Crear Empleado</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        <script type="text/javascript" src="/js/formValidator.js"></script>
         <%- include('./partials/head'); %>
     </head>
     <body>
@@ -24,42 +25,53 @@
                   <h3 class="text-center">Ingrese datos para crear empleado</h3>
                </div>
                <div class="row justify-content-center top-margin-5">
-                  <form action="./crear" method="POST">
-                     <div class="form-group">
+                  <form action="./crear" method="POST" onsubmit="return verificarInput();">
+                     <div class="form-row padding-width-400px">
                         <div class="col-12">
                            <h5>Nombre</h5>
-                           <input class="form-control" type="text" name="nombre"/>
+                           <input class="form-control" type="text" name="nombre" onkeyup="validateNames(event)" required/>
+                           <div id="message-nombre" class="invalid-feedback" hidden>
+                              Introduzca solo letras (A-Z) o (a-z). Máximo 50 caracteres.
+                           </div>
                         </div>
-                     </div>
-                     <div class="form-group">
-                         <div class="col-12">
-                            <h5>Apellido Paterno</h5>
-                            <input class="form-control" type="text" name="apellidoPaterno"/>
-                         </div>
-                      </div>
-                      <div class="form-group">
-                         <div class="col-12">
-                            <h5>Apellido Materno</h5>
-                            <input class="form-control" type="text" name="apellidoMaterno"/>
-                         </div>
-                      </div>
-                      <div class="form-group">
-                         <div class="col-12">
-                            <h5>Email</h5>
-                            <input class="form-control" type="text" name="email"/>
-                         </div>
-                      </div>
-                     <div class="form-group">
+                     
+                        <div class="col-12">
+                           <h5>Apellido Paterno</h5>
+                           <input class="form-control" type="text" name="apellidoPaterno" onkeyup="validateNames(event)" required/>
+                           <div id="message-apellidoPaterno" class="invalid-feedback" hidden>
+                              Introduzca solo letras (A-Z) o (a-z). Máximo 50 caracteres.
+                           </div>
+                        </div>
+                      
+                        <div class="col-12">
+                           <h5>Apellido Materno</h5>
+                           <input class="form-control" type="text" name="apellidoMaterno" onkeyup="validateNames(event)" required/>
+                           <div id="message-apellidoMaterno" class="invalid-feedback" hidden>
+                              Introduzca solo letras (A-Z) o (a-z). Máximo 50 caracteres.
+                           </div>
+                        </div>
+                      
+                        <div class="col-12">
+                           <h5>Email</h5>
+                           <input class="form-control" type="email" name="email" onkeyup="validateNames(event)" required/>
+                           <div id="message-email" class="invalid-feedback" hidden>
+                              Correo no valido. Máximo 60 caracteres.
+                           </div>
+                        </div>
+                     
                         <div class="col-12">
                            <h5>Contraseña</h5>
-                           <input class="form-control" type="password" name="password"/>
+                           <input class="form-control" type="password" name="password" onkeyup="validateNames(event)" required/>
+                           <div id="message-password" class="invalid-feedback" hidden>
+                              La contraseña no puede estar vacía. Máximo 30 caracteres.
+                           </div>
                         </div>
-                     </div>
-                     <div class="form-group">
-                        <div class="col-12 justify-content-center d-flex">
-                           <input class="btn btn-primary col-12" type="submit" value="Crear Empleado"/>
-                        </div>
-                     </div>         
+
+                           <div class="col-12 justify-content-center d-flex top-margin-5">
+                              <input class="btn btn-primary col-12" type="submit" value="Crear Empleado"/>
+                           </div>
+
+                     </div>        
                  </form>
                </div>
             </div>

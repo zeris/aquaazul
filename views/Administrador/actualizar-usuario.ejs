@@ -4,6 +4,7 @@
         <title>Aqua azul - Actualizar Usuario</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        <script type="text/javascript" src="/js/formValidator.js"></script>
         <%- include('./partials/head'); %>
     </head>
     <body>
@@ -24,33 +25,41 @@
                   <h3 class="text-center">Ingrese los datos a modificar del usuario</h3>
                </div>
                <div class="row justify-content-center top-margin-5">
-                  <form action="/administrador/usuarios/actualizar/<%= usuario.ID_USUARIO %>" method="POST">
-                     <div class="form-group">
+                  <form action="/administrador/usuarios/actualizar/<%= usuario.ID_USUARIO %>" method="POST" onsubmit="return verificarInput();">
+                     <div class="form-row padding-width-400px">
                         <div class="col-12">
                            <h5>Nombre</h5>
-                           <input class="form-control" type="text" name="nombre" value="<%= usuario.NOMBRE %>"/>
+                           <input class="form-control" type="text" name="nombre" value="<%= usuario.NOMBRE %>" onkeyup="validateNames(event)" required/>
+                           <div id="message-nombre" class="invalid-feedback" hidden>
+                              Introduzca solo letras (A-Z) o (a-z). Máximo 50 caracteres.
+                           </div>
                         </div>
-                     </div>
-                     <div class="form-group">
+
                         <div class="col-12">
                            <h5>Apellido Paterno</h5>
-                           <input class="form-control" type="text" name="apellidoPaterno" value="<%= usuario.APELLIDO_P %>"/>
+                           <input class="form-control" type="text" name="apellidoPaterno" value="<%= usuario.APELLIDO_P %>" onkeyup="validateNames(event)" required/>
+                           <div id="message-apellidoPaterno" class="invalid-feedback" hidden>
+                              Introduzca solo letras (A-Z) o (a-z). Máximo 50 caracteres.
+                           </div>
                         </div>
-                     </div>
-                     <div class="form-group">
+
                         <div class="col-12">
                            <h5>Apellido Materno</h5>
-                           <input class="form-control" type="text" name="apellidoMaterno" value="<%= usuario.APELLIDO_M %>"/>
+                           <input class="form-control" type="text" name="apellidoMaterno" value="<%= usuario.APELLIDO_M %>" onkeyup="validateNames(event)" required/>
+                           <div id="message-apellidoMaterno" class="invalid-feedback" hidden>
+                              Introduzca solo letras (A-Z) o (a-z). Máximo 50 caracteres.
+                           </div>
                         </div>
-                     </div>
-                     <div class="form-group">
+
                         <div class="col-12">
                            <h5>Email</h5>
-                           <input class="form-control" type="text" name="email" value="<%= usuario.EMAIL%>"/>
+                           <input class="form-control" type="email" name="email" value="<%= usuario.EMAIL%>" onkeyup="validateNames(event)" required/>
+                           <div id="message-email" class="invalid-feedback" hidden>
+                              Correo no valido. Máximo 60 caracteres.
+                           </div>
                         </div>
-                     </div>
-                     <div class="form-group">
-                        <div class="col-12 justify-content-center d-flex">
+
+                        <div class="col-12 justify-content-center d-flex top-margin-5">
                            <input class="btn btn-primary col-12" type="submit" value="Actualizar Usuario"/>
                         </div>
                      </div>          

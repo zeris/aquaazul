@@ -4,6 +4,7 @@
         <title>Aqua azul - Crear Producto</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        <script type="text/javascript" src="/js/formValidator.js"></script>
         <%- include('./partials/head'); %>
     </head>
     <body>
@@ -25,44 +26,53 @@
                </div>
                <div class="row justify-content-center top-margin-5">
                   <form action="./crear" method="POST" enctype="multipart/form-data">
-                     <div class="form-group">
+                     <div class="form-row padding-width-400px">
                         <div class="col-12">
                            <h5>Nombre</h5>
-                           <input class="form-control" type="text" name="nombre" />
+                           <input class="form-control" type="text" name="nombre" onkeyup="validateNames(event)" required/>
+                           <div id="message-nombre" class="invalid-feedback" hidden>
+                              Introduzca solo letras (A-Z) o (a-z). Máximo 50 caracteres.
+                           </div>
                         </div>
-                     </div>
-                     <div class="form-group">
-                         <div class="col-12">
-                            <h5>Precio</h5>
-                            <input class="form-control" type="number" name="precio" />
-                         </div>
-                      </div>
-                      <div class="form-group">
-                         <div class="col-12">
-                            <h5>Cantidad</h5>
-                            <input class="form-control" type="number" name="cantidad" />
-                         </div>
-                      </div>
-                      <div class="form-group">
-                         <div class="col-12">
-                            <h5>Marca</h5>
-                            <input class="form-control" type="text" name="marca" />
-                         </div>
-                      </div>
-                      <div class="form-group">
-                         <div class="col-12">
-                            <h5>Descripción</h5>
-                            <input class="form-control" type="text" name="descripcion" />
-                         </div>
-                      </div>
-                      <div class="form-group">
+
+                        <div class="col-12">
+                           <h5>Precio</h5>
+                           <input class="form-control" type="number" name="precio" step="any" onkeyup="validateNames(event)" required/>
+                           <div id="message-precio" class="invalid-feedback" hidden>
+                              El precio no puede ser mayot a $1000.00. Máximo 2 decimales.
+                           </div>
+                        </div>
+                     
+                        <div class="col-12">
+                           <h5>Cantidad</h5>
+                           <input class="form-control" type="number" name="cantidad" onkeyup="validateNames(event)" required/>
+                           <div id="message-cantidad" class="invalid-feedback" hidden>
+                              La cantidad debe de ser mínimo de 1. Máximo una cantidad de 500 productos.
+                           </div>
+                        </div>
+                      
+                        <div class="col-12">
+                           <h5>Marca</h5>
+                           <input class="form-control" type="text" name="marca" onkeyup="validateNames(event)" required/>
+                           <div id="message-marca" class="invalid-feedback" hidden>
+                              Máximo 50 caracteres.
+                           </div>
+                        </div>
+                     
+                        <div class="col-12">
+                           <h5>Descripción</h5>
+                           <input class="form-control" type="text" name="descripcion" onkeyup="validateNames(event)" required/>
+                           <div id="message-descripcion" class="invalid-feedback" hidden>
+                              Máximo 120 caracteres.
+                           </div>
+                        </div>
+                
                         <div class="col-12">
                            <h5>Imágen del producto</h5>
-                           <input type="file" class="form-control-file" name="imagen" accept="image/x-png,image/gif,image/jpeg" />
+                           <input type="file" class="form-control-file" name="imagen" accept="image/x-png,image/gif,image/jpeg" required/>
                         </div>
-                     </div>
-                     <div class="form-group">
-                        <div class="col-12 justify-content-center d-flex">
+                     
+                        <div class="col-12 justify-content-center d-flex top-margin-5">
                            <input class="btn btn-primary col-12" type="submit" value="Crear Producto"/>
                         </div>
                      </div>          
