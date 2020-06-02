@@ -55,10 +55,24 @@ router.post('/usuarios/crear', checkAuthenticated, async function(req,res,next)
         email : {type: "email", maxLength: 60, minLength: 1},
         password : {type: "string", maxLength: 30, minLength: 1}
     };
+    let validateFieldsOnlyLetters = ["nombre", "apellidoPaterno", "apellidoMaterno"];
     
     try 
     {
         await verificator.Validate(parametrosDeseados, req.body);
+
+        const pattern = /^[a-zA-ZÀ-ÿ\u00f1\u00d1]+(\s*[a-zA-ZÀ-ÿ\u00f1\u00d1]*)*[a-zA-ZÀ-ÿ\u00f1\u00d1]+$/g;
+
+        for(const validateFieldOnlyLetter of validateFieldsOnlyLetters)
+        {
+            if(!pattern.test(req.body[validateFieldOnlyLetter]))
+            { 
+                alertaError = true;
+                mensajeAlertaModulos = "El campo " + validateFieldOnlyLetter + " solo puede incluir letras";
+                res.redirect('/administrador/usuarios/crear');
+            }    
+        }
+       
         let query = "SELECT * FROM USUARIO WHERE EMAIL = '" + req.body.email + "'";
         sql.query(query, (respuestaQuery)=>
         {
@@ -139,9 +153,23 @@ router.post('/usuarios/actualizar/:idUsuario', checkAuthenticated, async functio
         email : {type: "email", maxLength: 60, minLength: 1},
     };
 
+    let validateFieldsOnlyLetters = ["nombre", "apellidoPaterno", "apellidoMaterno"];
+
     try
     {
         await verificator.Validate(parametrosDeseados, req.body);
+
+        const pattern = /^[a-zA-ZÀ-ÿ\u00f1\u00d1]+(\s*[a-zA-ZÀ-ÿ\u00f1\u00d1]*)*[a-zA-ZÀ-ÿ\u00f1\u00d1]+$/g;
+
+        for(const validateFieldOnlyLetter of validateFieldsOnlyLetters)
+        {
+            if(!pattern.test(req.body[validateFieldOnlyLetter]))
+            { 
+                alertaError = true;
+                mensajeAlertaModulos = "El campo " + validateFieldOnlyLetter + " solo puede incluir letras";
+                res.redirect('/administrador/usuarios/actualizar/' + req.params.idUsuario);
+            }    
+        }
         let query = "SELECT * FROM USUARIO WHERE EMAIL = '" + req.body.email + "'";
         sql.query(query, (respuestaQuery)=>
         {
@@ -255,6 +283,32 @@ router.post('/productos/crear', checkAuthenticated, upload.single('imagen'), asy
     try 
     {
         await verificator.Validate(parametrosDeseados, req.body);
+
+        const patternOnlyLetter = /^[a-zA-ZÀ-ÿ\u00f1\u00d1]+(\s*[a-zA-ZÀ-ÿ\u00f1\u00d1]*)*[a-zA-ZÀ-ÿ\u00f1\u00d1]+$/g;
+        const patternDecimalNumber = /^\d*(\.\d{1})?\d{0,1}$/;
+        const patternIntergerNumber = /^([0-9])*$/;
+
+        if(!patternOnlyLetter.test(req.body.nombre))
+        {
+            alertaError = true;
+            mensajeAlertaModulos = "El campo nombre solo puede incluir letras";
+            res.redirect('/administrador/productos/crear');
+        }   
+
+        if(!patternDecimalNumber.test(req.body.precio))
+        {
+            alertaError = true;
+            mensajeAlertaModulos = "El campo precio solo puede incluir numeros y un máximo de 2 decimales";
+            res.redirect('/administrador/productos/crear');
+        }
+
+        if(!patternIntergerNumber.test(req.body.cantidad))
+        {
+            alertaError = true;
+            mensajeAlertaModulos = "El campo cantidad solo puede incluir numeros enteros";
+            res.redirect('/administrador/productos/crear');   
+        }
+
         var query="SELECT * FROM producto " +
         "WHERE nombre = '" + req.body.nombre + "' AND marca = '" + req.body.marca + "' AND descripcion = '" + req.body.descripcion + "'";
 
@@ -371,6 +425,31 @@ router.post('/productos/actualizar/:idProducto', checkAuthenticated, async funct
     {
         await verificator.Validate(parametrosDeseados, req.body);
 
+        const patternOnlyLetter = /^[a-zA-ZÀ-ÿ\u00f1\u00d1]+(\s*[a-zA-ZÀ-ÿ\u00f1\u00d1]*)*[a-zA-ZÀ-ÿ\u00f1\u00d1]+$/g;
+        const patternDecimalNumber = /^\d*(\.\d{1})?\d{0,1}$/;
+        const patternIntergerNumber = /^([0-9])*$/;
+
+        if(!patternOnlyLetter.test(req.body.nombre))
+        {
+            alertaError = true;
+            mensajeAlertaModulos = "El campo nombre solo puede incluir letras";
+            res.redirect('/administrador/productos/actualizar/' + req.params.idProducto);
+        }   
+
+        if(!patternDecimalNumber.test(req.body.precio))
+        {
+            alertaError = true;
+            mensajeAlertaModulos = "El campo precio solo puede incluir numeros y un máximo de 2 decimales";
+            res.redirect('/administrador/productos/actualizar/' + req.params.idProducto);
+        }
+
+        if(!patternIntergerNumber.test(req.body.cantidad))
+        {
+            alertaError = true;
+            mensajeAlertaModulos = "El campo cantidad solo puede incluir numeros enteros";
+            res.redirect('/administrador/productos/actualizar/' + req.params.idProducto);
+        }
+
         let query="SELECT * FROM producto " +
         "WHERE nombre = '" + req.body.nombre + "' AND marca = '" + req.body.marca + "' AND descripcion = '" + req.body.descripcion + "'";
 
@@ -400,7 +479,7 @@ router.post('/productos/actualizar/:idProducto', checkAuthenticated, async funct
             else
             {
                 alertaError = true;
-                mensajeAlertaModulos = "No se pudo actualizar el producto, puesto que ya existe un producto existente con dichas características. Intente con otras carácteristicas (nombre, marca y descripción)";
+                mensajeAlertaModulos = "No se puede actualizar el producto, puesto que ya existe un producto con dichas características. Intente con otras características (nombre, marca y descripción)";
                 res.redirect('/administrador/productos/actualizar/' + req.params.idProducto);
             }
         });
@@ -482,9 +561,24 @@ router.post('/empleados/crear', checkAuthenticated, async function(req,res,next)
         password : {type: "string", maxLength: 30, minLength: 1}
     };
     
+    let validateFieldsOnlyLetters = ["nombre", "apellidoPaterno", "apellidoMaterno"];
+
     try 
     {
         await verificator.Validate(parametrosDeseados, req.body);
+
+        const pattern = /^[a-zA-ZÀ-ÿ\u00f1\u00d1]+(\s*[a-zA-ZÀ-ÿ\u00f1\u00d1]*)*[a-zA-ZÀ-ÿ\u00f1\u00d1]+$/g;
+
+        for(const validateFieldOnlyLetter of validateFieldsOnlyLetters)
+        {
+            if(!pattern.test(req.body[validateFieldOnlyLetter]))
+            { 
+                alertaError = true;
+                mensajeAlertaModulos = "El campo " + validateFieldOnlyLetter + " solo puede incluir letras";
+                res.redirect('/administrador/empleados/crear');
+            }    
+        }
+
         let query = "SELECT * FROM USUARIO WHERE EMAIL = '" + req.body.email + "'";
         sql.query(query, (respuestaQuery)=>
         {
@@ -565,9 +659,24 @@ router.post('/empleados/actualizar/:idEmpleado', checkAuthenticated, async funct
         email : {type: "email", maxLength: 60, minLength: 1},
     };
     
+    let validateFieldsOnlyLetters = ["nombre", "apellidoPaterno", "apellidoMaterno"];
+
     try 
     {
         await verificator.Validate(parametrosDeseados, req.body);
+
+        const pattern = /^[a-zA-ZÀ-ÿ\u00f1\u00d1]+(\s*[a-zA-ZÀ-ÿ\u00f1\u00d1]*)*[a-zA-ZÀ-ÿ\u00f1\u00d1]+$/g;
+
+        for(const validateFieldOnlyLetter of validateFieldsOnlyLetters)
+        {
+            if(!pattern.test(req.body[validateFieldOnlyLetter]))
+            { 
+                alertaError = true;
+                mensajeAlertaModulos = "El campo " + validateFieldOnlyLetter + " solo puede incluir letras";
+                res.redirect('/administrador/empleados/actualizar/' + req.params.idEmpleado);   
+            }    
+        }
+
         let query = "SELECT * FROM USUARIO WHERE EMAIL = '" + req.body.email + "'";
         sql.query(query, (respuestaQuery)=>
         {
