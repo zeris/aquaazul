@@ -6,6 +6,7 @@ const app = express();
 const sql = require('./helpers/databaseManager');
 const rutaIndex = require('./routes/index');
 const rutaAdministrador = require('./routes/administrador');
+const rutaRecuperarPassword = require('./routes/recuperar-contraseña');
 const bodyParser = require('body-parser');
 const LocalStrategy = require('passport-local');
 //Se inicializa puerto 
@@ -61,6 +62,7 @@ passport.deserializeUser(function(id, done)
 app.use(express.static('public'));
 app.set('view engine', 'ejs');
 app.use('/', rutaIndex);
+app.use('/', rutaRecuperarPassword);
 app.use('/administrador', rutaAdministrador);
 
 

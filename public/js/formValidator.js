@@ -131,4 +131,46 @@ function verificarInput()
 	return formValid;
 }
 
+function validateRecoverPassword()
+{
+	let inputPassword = null;
+	let inputVerifyPassword = null
+	for(const inputElement of document.forms[0])
+	{
+		if(inputElement.name == "password")
+		{
+			inputPassword = inputElement;
+		}
+
+		if(inputElement.name == "verifyPassword")
+		{
+			inputVerifyPassword = inputElement;
+		}
+	}
+
+	const message = document.getElementById('message-verifyPassword');
+
+	if(inputPassword.value !== inputVerifyPassword.value || inputPassword.value.length < 1 || inputVerifyPassword.value.length < 1 )
+	{
+		inputVerifyPassword.className = 'form-control is-invalid';
+		message.hidden = false;
+		return false
+	}
+	else
+	{
+		inputPassword.className = 'form-control is-valid';
+		inputVerifyPassword.className = 'form-control is-valid';
+		message.hidden = true;
+		return true;
+	}
+}
+
+function verificarRecoverPasswordForm()
+{
+	let formValid = true;
+	formValid = validateRecoverPassword();
+	return formValid;
+}
+
+
 

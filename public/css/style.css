@@ -18,6 +18,13 @@ ul.topnav li a {
   text-decoration: none;
 }
 
+.invalid_field_message
+{
+  width: 100%;
+  margin-top: .25rem;
+  font-size: 80%;
+  color: #dc3545;
+}
 .all-padding-10px
 {
   padding: 10px;

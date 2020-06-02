@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Aqua azul - Login</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        <script type="text/javascript" src="/js/formValidator.js"></script>
+        <%- include('./partials/head'); %>
+    </head>
+    <body class="background-login">
+      <div class="container">
+         <div class="row Absolute-Center is-Responsive">
+            <div class="col-12 transparent-header">
+               <% if(pedirCorreo === true) { %>
+                  <form class="" action="/recoverpassword" method="POST">
+                     <div class="form-group col-12 justify-content-center d-flex">
+                        <img class="product-card-image" src="./images/aquaazul-logo.png" style="max-width: 130px; width:100%;"/>
+                     </div>
+                     
+                     <div class="form-group">
+                        <% if(error) { %>
+                           <li><%= errorMessage %></li>
+                        <% } %>
+                        <div class="col-12 justify-content-center d-flex">
+                           <h5>Ingrese su correo electrónico para restaurar su contraseña</h5>
+                        </div>
+                        <div class="col-12 justify-content-center d-flex">
+                           <input class="form-control" type="email" name="email" required/>
+                        </div>
+                     </div>            
+                     <div class="form-group row">
+                        <div class="col-6 justify-content-center d-flex">
+                           <input class="btn btn-primary" type="submit" value="Siguiente"/>
+                        </div>
+                        <div class="col-6 justify-content-center d-flex">
+                           <input type="button" class="btn btn-danger" onClick="window.location='/login';" value="Cancelar"/>
+                        </div>
+                     </div>
+                  </form>
+               <% }else if(tokenEnviado === true){ %>
+                  <form class="" action="/recoverpassword/verify/token" method="POST">
+                     <div class="form-group col-12 justify-content-center d-flex">
+                        <img class="product-card-image" src="./images/aquaazul-logo.png" style="max-width: 130px; width:100%;"/>
+                     </div>
+                     
+                     <div class="form-group">
+                        <% if(error) { %>
+                           <li><%= errorMessage %></li>
+                        <% } %>
+                        <div class="col-12 justify-content-center d-flex">
+                           <h5>Ingrese su código de restauración de contraseña</h5>
+                        </div>
+                        <div class="col-12 justify-content-center d-flex">
+                           <input class="form-control" type="text" name="token" required/>
+                        </div>
+                     </div>            
+                     <div class="form-group row">
+                        <div class="col-6 justify-content-center d-flex">
+                           <input class="btn btn-primary" type="submit" value="Siguiente"/>
+                        </div>
+                        <div class="col-6 justify-content-center d-flex">
+                           <input type="button" class="btn btn-danger" onClick="window.location='/login';" value="Cancelar"/>
+                        </div>
+                     </div>
+                  </form>
+               <% }else if(tokenValidado === true){ %>
+                  <form class="" action="/setpassword" method="POST" onsubmit="return verificarRecoverPasswordForm();">
+                     <div class="form-group col-12 justify-content-center d-flex">
+                        <img class="product-card-image" src="./images/aquaazul-logo.png" style="max-width: 130px; width:100%;"/>
+                     </div>
+                     
+                     <div class="form-group">
+                        <% if(error) { %>
+                           <li><%= errorMessage %></li>
+                        <% } %>
+                        <div class="col-12 justify-content-center d-flex">
+                           <h6>Ingrese su nueva contraseña</h6>
+                        </div>
+                        <div class="col-12 justify-content-center d-flex">
+                           <input class="form-control" type="password" name="password" onkeyup="validateRecoverPassword()" required/>
+                        </div>
+                        <div class="col-12 justify-content-center d-flex">
+                           <h6>Repita su nueva contraseña</h6>
+                        </div>
+                        <div class="col-12 justify-content-center d-flex">
+                              <input class="form-control" type="password" name="verifyPassword" onkeyup="validateRecoverPassword()" required/>
+                        </div>
+                        <div id="message-verifyPassword" class="invalid_field_message text-center" hidden>
+                           Las contraseñas no coinciden
+                        </div>
+                     </div>            
+                     <div class="form-group row">
+                        <div class="col-6 justify-content-center d-flex">
+                           <input class="btn btn-primary" type="submit" value="Aceptar"/>
+                        </div>
+                        <div class="col-6 justify-content-center d-flex">
+                           <input type="button" class="btn btn-danger" onClick="window.location='/login';" value="Cancelar"/>
+                        </div>
+                     </div>
+                  </form>
+               <% } %>
+            </div>
+         </div>
+      </div>
+    </body>
+</html>
