@@ -9,7 +9,7 @@
                </div>
             <% } %>  
          </div>
-         <div class="col-12 bottom-preview-card-image-container">
+         <div class="col-12 bottom-preview-card-image-container containt-content">
             <p class="card-text title-tip-preview" title="<%= tip.TITULO %>"><%= tip.TITULO.length > 22 ? tip.TITULO.slice(0, 19) + "..." : tip.TITULO %></p>
             <div class="text-preview">
                <%- (tip.CUERPO.slice(0, 180)).replace('<div class="col-lg-8 col-12  space-between-parraphs">', '') + "..." %>

@@ -56,6 +56,11 @@ ul.topnav li.right {float: right;}
     padding: 0%;
 }
 
+.containt-content
+{
+  contain: content;
+}
+
 .left-padding-10px
 {
     padding-top: 0px;
