@@ -384,7 +384,7 @@ router.post('/productos/actualizar/:idProducto', checkAuthenticated, async funct
         {
             if(respuestaQuery.rowsAffected[0] === 0 || respuestaQuery.recordset[0].ID_SKU == req.params.idProducto)
             {
-                let query= "UPDATE PRODUCTO SET NOMBRE = '" + req.body.nombre + "', PRECIO = " + req.body.precio + ", IMAGEN = '" + req.body.imagen + "' " +
+                let query= "UPDATE PRODUCTO SET NOMBRE = '" + req.body.nombre + "', PRECIO = " + req.body.precio + ", IMAGEN = '" + req.body.imagen + "', " +
                 "CANTIDAD = " + req.body.cantidad + ", MARCA = '" + req.body.marca + "', DESCRIPCION = '" + req.body.descripcion + "' WHERE ID_SKU = " + req.params.idProducto;
                 
                 sql.query(query, (respuestaQuery)=>

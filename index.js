@@ -62,6 +62,8 @@ passport.deserializeUser(function(id, done)
             });
         }
 
+        console.log(user);
+        console.log(user.name)
         let usuario=user.recordset;
         if(user.rowsAffected[0] > 0)
         {
