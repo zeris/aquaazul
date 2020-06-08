@@ -79,7 +79,7 @@ router.get('/listaproductos',checkAuthenticated, function(req, res)
 
 router.get('/listaproductos/buscar',checkAuthenticated, function(req, res)
 {
-   let query= "select * from producto where NOMBRE like '%" + req.query.nombreBuscar + "%'";
+   let query= "select * from producto where NOMBRE like '%" + req.query.nombreBuscar + "%' AND CANTIDAD > 0";
    sql.query(query, (respuestaQuery)=>
    {
       let resultadosBusqueda=respuestaQuery.recordset;
@@ -94,15 +94,13 @@ router.get('/listaproductos/:pagina',checkAuthenticated, function(req, res)
    let query = "SELECT * FROM " +
    "( "+
       "SELECT ROW_NUMBER() OVER(ORDER BY ID_SKU) NUM, "+
-      "* FROM PRODUCTO " +
+      "* FROM PRODUCTO WHERE CANTIDAD > 0 " +
    ") A " +
    "WHERE NUM > " + 8 * (req.params.pagina - 1) +" AND NUM <= " + 8 * req.params.pagina;
    sql.query(query, (respuestaQuery)=>
    {
       sql.query("SELECT COUNT(*) as 'num' FROM PRODUCTO", (numTotalProductos)=>
       {
-         console.log("numTotalProductos");
-         console.log(numTotalProductos);
          let totalButtonsPagination = numTotalProductos.recordset[0].num / 8;
          if((totalButtonsPagination + "").split(".")[1] > 0)
          {
@@ -112,8 +110,7 @@ router.get('/listaproductos/:pagina',checkAuthenticated, function(req, res)
          {
             totalButtonsPagination = parseInt(totalButtonsPagination);  
          }
-         console.log("totalButtonsPagination");
-         console.log(totalButtonsPagination);
+
          let pagina = parseInt(req.params.pagina)
          let loadNextButton = true;
 
@@ -124,10 +121,6 @@ router.get('/listaproductos/:pagina',checkAuthenticated, function(req, res)
          {
             loadNextButton = false;
          }
-         console.log("maxButtonsPagination");
-         console.log(maxButtonsPagination);
-         console.log("minButtonsPagination");
-         console.log(minButtonsPagination);
          respuestaQuery=respuestaQuery.recordset;
          let params = {listaProductos: respuestaQuery, errorAgregarProducto:false, productoAgregado: false, maxButtonsPagination: maxButtonsPagination, minButtonsPagination: minButtonsPagination, currentPage: pagina, loadNextButton: loadNextButton, busqueda: false, totalButtonsPagination: totalButtonsPagination };
          if(productoAgregado)
@@ -157,7 +150,21 @@ router.get('/carritocompras', checkAuthenticated, function(req, res)
       }
       res.render('carrito-compras', {carritoCompras:carrito, totalCompra:totalCompra});
    });
-   
+});
+
+router.post('/carritocompras', checkAuthenticated, function(req, res)
+{
+   let query = ""
+   for(const producto of req.body.datos)
+   {
+      query = "UPDATE CARRITO SET CANTIDAD = " + producto.cantidad + " WHERE ID_SKU = " + producto.id + " AND ID_USUARIO = " + req.user.ID_USUARIO;
+      console.log(query);
+      sql.query(query, (respuestaQuery)=>
+      {
+
+      });
+   }
+   res.status(200).send();
 });
 
 router.get('/agregar-a-carrito/:id', checkAuthenticated, function(req, res)
@@ -211,10 +218,11 @@ router.get('/eliminar-carrito/:id', checkAuthenticated, function(req, res)
 
 router.get('/finalizarventa', checkAuthenticated, function(req, res)
 {
+   console.log(req);
    let query = "INSERT INTO HISTORIAL_COMPRA (ID_SKU, ID_USUARIO, CANTIDAD) SELECT ID_SKU, ID_USUARIO, CANTIDAD FROM CARRITO WHERE ID_USUARIO = " + req.user.ID_USUARIO;
    sql.query(query, (respuestaQuery) =>
    {
-      if(respuestaQuery.rowsAffected > 0)
+      if(respuestaQuery.rowsAffected[0] > 0)
       {
          query = "SELECT ID_SKU, ID_USUARIO, CANTIDAD FROM CARRITO WHERE ID_USUARIO = " + req.user.ID_USUARIO;
          sql.query(query, (respuestaQuery)=>
@@ -224,7 +232,7 @@ router.get('/finalizarventa', checkAuthenticated, function(req, res)
                query = "UPDATE PRODUCTO SET CANTIDAD = CANTIDAD - " + productoComprado.CANTIDAD + " WHERE ID_SKU = " + productoComprado.ID_SKU;
                sql.query(query, (respuestaQuery)=>
                {
-                  if(respuestaQuery.rowsAffected == 0)
+                  if(respuestaQuery.rowsAffected[0] == 0)
                   {
                      console.log("Hubo un error");
                   }
@@ -233,7 +241,7 @@ router.get('/finalizarventa', checkAuthenticated, function(req, res)
             query = "DELETE FROM CARRITO WHERE ID_USUARIO = " + req.user.ID_USUARIO;
             sql.query(query, (respuestaQuery)=>
             {
-               if(respuestaQuery.rowsAffected > 0)
+               if(respuestaQuery.rowsAffected[0] > 0)
                {
                   res.redirect('/inicio');
                }

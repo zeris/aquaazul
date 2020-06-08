@@ -51,9 +51,35 @@
                         function onChangeItemsQuantity(event)
                         {
                             getProductsTotalPrice();
+                            getData();
                         }
 
-                       
+                        function getData()
+                        {
+                            var data = []
+                            var items = document.getElementsByClassName('item-shopping-car');
+                           var itemsLength = '<%= carritoCompras.length %>'
+                           for(let i = 0; i < itemsLength; i++)
+                            {
+                                let producto = {cantidad: "", id: ""}
+                                producto.id = items[i].getAttribute('value')
+                                producto.cantidad = items[i].getElementsByClassName('quantity')[0].value;
+                                data.push(producto);
+                            } 
+                            var http = new XMLHttpRequest();
+                            var url = '/carritocompras';
+                            var params = {datos: data};
+                            http.open('POST', url, true);
+
+                            http.setRequestHeader('Content-type', 'application/json');
+
+                            http.onreadystatechange = function() 
+                            {
+                                if(http.readyState == 4 && http.status == 200) {
+                                }
+                            }
+                            http.send(JSON.stringify(params));
+                        }
                     </script>
                     <h4 class="justify-content-center d-flex" id='totalCompra'>Total de compra: $ </h4>
                     <script>getProductsTotalPrice();</script>
