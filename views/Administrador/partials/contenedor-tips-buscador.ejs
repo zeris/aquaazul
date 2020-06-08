@@ -1,0 +1,17 @@
+<% for(const tip of resultadosBusqueda) { %>
+   <div class="row all-padding-10px">
+       <div class="col-lg-7 col-12  height-margin-2">
+           <h4> <%= tip.TITULO %> </h4>
+       </div>
+       <div class="col-lg-2 col-12 height-margin-2">
+           <form action="/administrador/tips/actualizar/<%= tip.ID_TIP %>" method="GET">
+               <input class="btn btn-success col-12" type="submit" value="Actualizar"/>
+           </form>
+       </div>
+       <div class="col-lg-2 col-12 height-margin-2">
+           <form action="/administrador/tips/eliminar/<%= tip.ID_TIP %>" method="GET">
+               <input class="btn btn-danger col-12" type="submit" value="Eliminar"/>
+           </form>
+       </div>     
+   </div>
+<% } %>

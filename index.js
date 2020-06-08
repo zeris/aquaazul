@@ -14,7 +14,7 @@ app.set('port', process.env.PORT || 10000);
 
 //Dependencias necesarias para que el servidor funcione
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended:true}));
+app.use(bodyParser.urlencoded({extended:true, limit: '50mb'}));
 
 app.use(flash());
 app.use(session({
@@ -49,8 +49,21 @@ passport.deserializeUser(function(id, done)
 {
     sql.query("SELECT * FROM USUARIO WHERE ID_USUARIO = " + id, function(user)
     {
+        
+        if(user.name == 'ConnectionError')
+        {
+            sql.query("SELECT * FROM USUARIO WHERE ID_USUARIO = " + id, function(user)
+            {
+                let usuario=user.recordset;
+                if(user.rowsAffected[0] > 0)
+                {
+                    return done(null, usuario[0]);
+                }
+            });
+        }
+
         let usuario=user.recordset;
-        if(usuario.length > 0)
+        if(user.rowsAffected[0] > 0)
         {
             return done(null, usuario[0]);
         }

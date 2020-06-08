@@ -5,16 +5,18 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
         <%- include('./partials/head'); %>
+        <script src="https://cdn.ckeditor.com/ckeditor5/19.1.1/classic/translations/es.js"></script>
+        <script src='/ckeditor5/ckeditor.js'></script>
     </head>
     <body>
         <%- include('./partials/navbar'); %>
         <div class="container height-margin-1">
             <div class="row">
-               <div class="col-12  text-center">
+               <div class="col-12 text-center">
                   <h1><%= tip.TITULO %></h1>
                </div>
             </div>
-            <div class="row text-tip">
+            <div class="row text-tip ck ck-content ck-editor__editable ck-rounded-corners ck-editor__editable_inline ck-blurred">
                <%- tip.CUERPO %>
             </div>
         </div>

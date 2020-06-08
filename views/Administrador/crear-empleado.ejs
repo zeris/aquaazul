@@ -59,11 +59,18 @@
                            </div>
                         </div>
                      
-                        <div class="col-12">
+                        <div class="from-group col-12">
                            <h5>Contraseña</h5>
                            <input class="form-control" type="password" name="password" onkeyup="validateNames(event)" required/>
                            <div id="message-password" class="invalid-feedback" hidden>
-                              La contraseña no puede estar vacía. Máximo 30 caracteres.
+                              No puede estar vacío el campo. Máximo 30 caracteres.
+                           </div>
+                        </div>
+                        <div class="from-group col-12">
+                           <h5>Repita la contraseña</h5>
+                           <input class="form-control" type="password" name="verifyPassword" onkeyup="validateNames(event)" required/>
+                           <div id="message-verifyPassword" class="invalid-feedback" hidden>
+                              Las contraseñas no coinciden.
                            </div>
                         </div>
 

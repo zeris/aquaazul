@@ -4,10 +4,16 @@ const passport = require('passport');
 const sql = require('../helpers/databaseManager');
 //const jwt = require('../helpers/jwt');
 let productoAgregado = false;
+let errorAgregarProducto = false;
 
 function checkAuthenticated(req, res, next) {
    if (req.isAuthenticated()) 
    {
+      if(req.user.ADMINISTRADOR === true)
+      {
+         res.redirect('/administrador/inicio');
+      }
+
      return next();
    }
    res.redirect("/login");
@@ -77,7 +83,7 @@ router.get('/listaproductos/buscar',checkAuthenticated, function(req, res)
    sql.query(query, (respuestaQuery)=>
    {
       let resultadosBusqueda=respuestaQuery.recordset;
-      let params = {listaProductos: resultadosBusqueda, productoAgregado: false, busqueda: true};
+      let params = {listaProductos: resultadosBusqueda, productoAgregado: false, busqueda: true, errorAgregarProducto: false};
          
       res.render('lista-productos', params);
    })
@@ -95,31 +101,43 @@ router.get('/listaproductos/:pagina',checkAuthenticated, function(req, res)
    {
       sql.query("SELECT COUNT(*) as 'num' FROM PRODUCTO", (numTotalProductos)=>
       {
+         console.log("numTotalProductos");
+         console.log(numTotalProductos);
          let totalButtonsPagination = numTotalProductos.recordset[0].num / 8;
-         let pagina = parseInt(req.params.pagina)
-         let loadNextButton = true;
-
-         if((pagina % 2) === 1)
+         if((totalButtonsPagination + "").split(".")[1] > 0)
          {
-            maxButtonsPagination = (pagina + 2) > totalButtonsPagination ? totalButtonsPagination : pagina + 2; 
-            minButtonsPagination = pagina;
+            totalButtonsPagination = parseInt(totalButtonsPagination) + 1;
          }
          else
          {
-            maxButtonsPagination = (pagina + 1) > totalButtonsPagination ? totalButtonsPagination : pagina + 1; ;
-            minButtonsPagination = pagina - 1;
+            totalButtonsPagination = parseInt(totalButtonsPagination);  
          }
+         console.log("totalButtonsPagination");
+         console.log(totalButtonsPagination);
+         let pagina = parseInt(req.params.pagina)
+         let loadNextButton = true;
+
+         maxButtonsPagination =  pagina === 1 ? pagina + 2 : pagina + 1;
+         minButtonsPagination = pagina === 1 ? pagina : pagina - 1;
 
          if(pagina === totalButtonsPagination)
          {
             loadNextButton = false;
          }
-
+         console.log("maxButtonsPagination");
+         console.log(maxButtonsPagination);
+         console.log("minButtonsPagination");
+         console.log(minButtonsPagination);
          respuestaQuery=respuestaQuery.recordset;
-         let params = {listaProductos: respuestaQuery, productoAgregado: false, maxButtonsPagination: maxButtonsPagination, minButtonsPagination: minButtonsPagination, currentPage: pagina, loadNextButton: loadNextButton, busqueda: false };
+         let params = {listaProductos: respuestaQuery, errorAgregarProducto:false, productoAgregado: false, maxButtonsPagination: maxButtonsPagination, minButtonsPagination: minButtonsPagination, currentPage: pagina, loadNextButton: loadNextButton, busqueda: false, totalButtonsPagination: totalButtonsPagination };
          if(productoAgregado)
          {
-            params = {listaProductos: respuestaQuery, productoAgregado: true, maxButtonsPagination: maxButtonsPagination, minButtonsPagination: minButtonsPagination, currentPage: pagina, loadNextButton: loadNextButton, busqueda: false };
+            params = {listaProductos: respuestaQuery, errorAgregarProducto:false, productoAgregado: true, maxButtonsPagination: maxButtonsPagination, minButtonsPagination: minButtonsPagination, currentPage: pagina, loadNextButton: loadNextButton, busqueda: false, totalButtonsPagination: totalButtonsPagination };
+            productoAgregado = false;
+         }
+         else if(errorAgregarProducto)
+         {
+            params = {listaProductos: respuestaQuery, errorAgregarProducto:true, productoAgregado: false, maxButtonsPagination: maxButtonsPagination, minButtonsPagination: minButtonsPagination, currentPage: pagina, loadNextButton: loadNextButton, busqueda: false, totalButtonsPagination: totalButtonsPagination };
             productoAgregado = false;
          }
          res.render('lista-productos', params);
@@ -129,13 +147,13 @@ router.get('/listaproductos/:pagina',checkAuthenticated, function(req, res)
 
 router.get('/carritocompras', checkAuthenticated, function(req, res)
 {
-   sql.query("SELECT PRODUCTO.ID_SKU, NOMBRE, MARCA, DESCRIPCION, PRECIO FROM CARRITO INNER JOIN PRODUCTO ON CARRITO.ID_SKU = PRODUCTO.ID_SKU WHERE ID_USUARIO="+req.user.ID_USUARIO, function(carrito1)
+   sql.query("SELECT PRODUCTO.ID_SKU, NOMBRE, MARCA, IMAGEN, DESCRIPCION, PRECIO, PRODUCTO.CANTIDAD AS 'CANTIDADPRODUCTO', CARRITO.CANTIDAD AS 'CANTIDADCARRITO'  FROM CARRITO INNER JOIN PRODUCTO ON CARRITO.ID_SKU = PRODUCTO.ID_SKU WHERE ID_USUARIO="+req.user.ID_USUARIO, function(carrito1)
    {
       let carrito=carrito1.recordset;
       var totalCompra=0;
       for(const prodCarrito of carrito)
       {
-         totalCompra+= prodCarrito.PRECIO;
+         totalCompra+= (prodCarrito.PRECIO * prodCarrito.CANTIDADCARRITO);
       }
       res.render('carrito-compras', {carritoCompras:carrito, totalCompra:totalCompra});
    });
@@ -144,20 +162,37 @@ router.get('/carritocompras', checkAuthenticated, function(req, res)
 
 router.get('/agregar-a-carrito/:id', checkAuthenticated, function(req, res)
 {
-   let query = "IF (SELECT COUNT(*) FROM CARRITO WHERE ID_SKU = " + req.params.id + " AND ID_USUARIO = " + req.user.ID_USUARIO + ") = 1 " +
-   "BEGIN " +
-      "UPDATE CARRITO SET CANTIDAD = CANTIDAD + 1 WHERE  ID_SKU = " + req.params.id + " AND ID_USUARIO = " + req.user.ID_USUARIO + " " +
-   "END " +
-   "ELSE " +
-   "BEGIN " +
-      "INSERT INTO CARRITO (ID_SKU, ID_USUARIO, CANTIDAD) VALUES (" + req.params.id + ", " + req.user.ID_USUARIO + ", 1) " +
-   "END";
+   let query = "SELECT CANTIDAD FROM CARRITO WHERE ID_SKU = " + req.params.id + " AND ID_USUARIO = " + req.user.ID_USUARIO;
    sql.query(query, (respuestaQuery)=>
    {
-      productoAgregado = true;
-      res.redirect('../listaproductos');
-      //sql.query("INSERT INTO CARRITO (ID_SKU, ID_USUARIO) VALUES (" + req.params.id + ", " + req.user.ID_USUARIO + ")")
-   });
+      let cantidadProductoCarritoComras = respuestaQuery.rowsAffected[0].length > 0 ? respuestaQuery.recordset[0].CANTIDAD : 0;
+      query = "SELECT CANTIDAD FROM PRODUCTO WHERE ID_SKU = " + req.params.id;
+      sql.query(query, (respuestaQuery)=>
+      {
+         let cantidadProductoInventario = respuestaQuery.recordset[0].CANTIDAD;
+         if(cantidadProductoCarritoComras < cantidadProductoInventario)
+         {
+            query = "IF (SELECT COUNT(*) FROM CARRITO WHERE ID_SKU = " + req.params.id + " AND ID_USUARIO = " + req.user.ID_USUARIO + ") = 1 " +
+            "BEGIN " +
+               "UPDATE CARRITO SET CANTIDAD = CANTIDAD + 1 WHERE  ID_SKU = " + req.params.id + " AND ID_USUARIO = " + req.user.ID_USUARIO + " " +
+            "END " +
+            "ELSE " +
+            "BEGIN " +
+               "INSERT INTO CARRITO (ID_SKU, ID_USUARIO, CANTIDAD) VALUES (" + req.params.id + ", " + req.user.ID_USUARIO + ", 1) " +
+            "END";
+            sql.query(query, (respuestaQuery)=>
+            {
+               productoAgregado = true;
+               res.redirect('../listaproductos');
+            });
+         }
+         else
+         {
+            errorAgregarProducto = true;
+            res.redirect('../listaproductos');
+         }
+      });
+   })
 });
 
 router.get('/eliminar-carrito/:id', checkAuthenticated, function(req, res)

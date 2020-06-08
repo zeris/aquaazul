@@ -18,7 +18,11 @@ function checkAuthenticated(req, res, next)
 {
     if (req.isAuthenticated()) 
     {
-      return next();
+        if(req.user.ADMINISTRADOR === false)
+        {
+           res.redirect('/inicio');
+        }
+        return next();
     }
     res.redirect("/login");
 }
@@ -55,24 +59,11 @@ router.post('/usuarios/crear', checkAuthenticated, async function(req,res,next)
         email : {type: "email", maxLength: 60, minLength: 1},
         password : {type: "string", maxLength: 30, minLength: 1}
     };
-    let validateFieldsOnlyLetters = ["nombre", "apellidoPaterno", "apellidoMaterno"];
     
     try 
     {
         await verificator.Validate(parametrosDeseados, req.body);
 
-        const pattern = /^[a-zA-ZÀ-ÿ\u00f1\u00d1]+(\s*[a-zA-ZÀ-ÿ\u00f1\u00d1]*)*[a-zA-ZÀ-ÿ\u00f1\u00d1]+$/g;
-
-        for(const validateFieldOnlyLetter of validateFieldsOnlyLetters)
-        {
-            if(!pattern.test(req.body[validateFieldOnlyLetter]))
-            { 
-                alertaError = true;
-                mensajeAlertaModulos = "El campo " + validateFieldOnlyLetter + " solo puede incluir letras";
-                res.redirect('/administrador/usuarios/crear');
-            }    
-        }
-       
         let query = "SELECT * FROM USUARIO WHERE EMAIL = '" + req.body.email + "'";
         sql.query(query, (respuestaQuery)=>
         {
@@ -153,23 +144,10 @@ router.post('/usuarios/actualizar/:idUsuario', checkAuthenticated, async functio
         email : {type: "email", maxLength: 60, minLength: 1},
     };
 
-    let validateFieldsOnlyLetters = ["nombre", "apellidoPaterno", "apellidoMaterno"];
-
     try
     {
         await verificator.Validate(parametrosDeseados, req.body);
 
-        const pattern = /^[a-zA-ZÀ-ÿ\u00f1\u00d1]+(\s*[a-zA-ZÀ-ÿ\u00f1\u00d1]*)*[a-zA-ZÀ-ÿ\u00f1\u00d1]+$/g;
-
-        for(const validateFieldOnlyLetter of validateFieldsOnlyLetters)
-        {
-            if(!pattern.test(req.body[validateFieldOnlyLetter]))
-            { 
-                alertaError = true;
-                mensajeAlertaModulos = "El campo " + validateFieldOnlyLetter + " solo puede incluir letras";
-                res.redirect('/administrador/usuarios/actualizar/' + req.params.idUsuario);
-            }    
-        }
         let query = "SELECT * FROM USUARIO WHERE EMAIL = '" + req.body.email + "'";
         sql.query(query, (respuestaQuery)=>
         {
@@ -241,7 +219,6 @@ router.get('/usuarios/eliminar/:idUsuario', checkAuthenticated, function(req,res
 
 router.get('/usuarios/buscar', checkAuthenticated,  function(req,res,next)
 {
-    //res.render('Administrador/productos', {administrador:req.user})
     let query= "select * from usuario where ADMINISTRADOR = 'false' and NOMBRE like '%" + req.query.nombreBuscar + "%'";
     sql.query(query, (respuestaQuery)=>
     {
@@ -268,47 +245,21 @@ router.get('/productos/crear', checkAuthenticated, function(req,res,next)
     mensajeAlertaModulos = "";
 });
 
-router.post('/productos/crear', checkAuthenticated, upload.single('imagen'), async function(req,res,next)
+router.post('/productos/crear', checkAuthenticated, async function(req,res,next)
 {
-    Object.setPrototypeOf(req.body, Object.prototype);
     let parametrosDeseados =
     {
         nombre : {type: "string", maxLength: 60, minLength: 1},
         precio : {type: "double", minLength: 1},
         cantidad : {type: "int", minLength: 1},
         marca : {type: "string", maxLength: 60, minLength: 1},
-        descripcion : {type: "string", maxLength: 120, minLength: 1}
+        descripcion : {type: "string", maxLength: 120, minLength: 1},
+        imagen: {type: "string", minLength: 1},
     };
     
     try 
     {
         await verificator.Validate(parametrosDeseados, req.body);
-
-        const patternOnlyLetter = /^[a-zA-ZÀ-ÿ\u00f1\u00d1]+(\s*[a-zA-ZÀ-ÿ\u00f1\u00d1]*)*[a-zA-ZÀ-ÿ\u00f1\u00d1]+$/g;
-        const patternDecimalNumber = /^\d*(\.\d{1})?\d{0,1}$/;
-        const patternIntergerNumber = /^([0-9])*$/;
-
-        if(!patternOnlyLetter.test(req.body.nombre))
-        {
-            alertaError = true;
-            mensajeAlertaModulos = "El campo nombre solo puede incluir letras";
-            res.redirect('/administrador/productos/crear');
-        }   
-
-        if(!patternDecimalNumber.test(req.body.precio))
-        {
-            alertaError = true;
-            mensajeAlertaModulos = "El campo precio solo puede incluir numeros y un máximo de 2 decimales";
-            res.redirect('/administrador/productos/crear');
-        }
-
-        if(!patternIntergerNumber.test(req.body.cantidad))
-        {
-            alertaError = true;
-            mensajeAlertaModulos = "El campo cantidad solo puede incluir numeros enteros";
-            res.redirect('/administrador/productos/crear');   
-        }
-
         var query="SELECT * FROM producto " +
         "WHERE nombre = '" + req.body.nombre + "' AND marca = '" + req.body.marca + "' AND descripcion = '" + req.body.descripcion + "'";
 
@@ -316,9 +267,9 @@ router.post('/productos/crear', checkAuthenticated, upload.single('imagen'), asy
         {
             if(respuestaQuery.rowsAffected[0] === 0)
             {
-                query="insert into producto (NOMBRE, PRECIO, CANTIDAD, MARCA, DESCRIPCION) " +
+                query="insert into producto (NOMBRE, PRECIO, CANTIDAD, MARCA, DESCRIPCION, IMAGEN) " +
                 "values ('" + req.body.nombre + "', " + req.body.precio + ", " + req.body.cantidad + "," +
-                "'" + req.body.marca + "', '" + req.body.descripcion + "')";
+                "'" + req.body.marca + "', '" + req.body.descripcion + "', '" + req.body.imagen + "')";
 
                 sql.query(query, (respuestaQuery)=>
                 {
@@ -418,37 +369,13 @@ router.post('/productos/actualizar/:idProducto', checkAuthenticated, async funct
         precio : {type: "double", minLength: 1},
         cantidad : {type: "int", minLength: 1},
         marca : {type: "string", maxLength: 60, minLength: 1},
-        descripcion : {type: "string", maxLength: 120, minLength: 1}
+        descripcion : {type: "string", maxLength: 120, minLength: 1},
+        imagen: {type: "string", minLength: 1}
     };
     
     try 
     {
         await verificator.Validate(parametrosDeseados, req.body);
-
-        const patternOnlyLetter = /^[a-zA-ZÀ-ÿ\u00f1\u00d1]+(\s*[a-zA-ZÀ-ÿ\u00f1\u00d1]*)*[a-zA-ZÀ-ÿ\u00f1\u00d1]+$/g;
-        const patternDecimalNumber = /^\d*(\.\d{1})?\d{0,1}$/;
-        const patternIntergerNumber = /^([0-9])*$/;
-
-        if(!patternOnlyLetter.test(req.body.nombre))
-        {
-            alertaError = true;
-            mensajeAlertaModulos = "El campo nombre solo puede incluir letras";
-            res.redirect('/administrador/productos/actualizar/' + req.params.idProducto);
-        }   
-
-        if(!patternDecimalNumber.test(req.body.precio))
-        {
-            alertaError = true;
-            mensajeAlertaModulos = "El campo precio solo puede incluir numeros y un máximo de 2 decimales";
-            res.redirect('/administrador/productos/actualizar/' + req.params.idProducto);
-        }
-
-        if(!patternIntergerNumber.test(req.body.cantidad))
-        {
-            alertaError = true;
-            mensajeAlertaModulos = "El campo cantidad solo puede incluir numeros enteros";
-            res.redirect('/administrador/productos/actualizar/' + req.params.idProducto);
-        }
 
         let query="SELECT * FROM producto " +
         "WHERE nombre = '" + req.body.nombre + "' AND marca = '" + req.body.marca + "' AND descripcion = '" + req.body.descripcion + "'";
@@ -457,7 +384,7 @@ router.post('/productos/actualizar/:idProducto', checkAuthenticated, async funct
         {
             if(respuestaQuery.rowsAffected[0] === 0 || respuestaQuery.recordset[0].ID_SKU == req.params.idProducto)
             {
-                let query= "UPDATE PRODUCTO SET NOMBRE = '" + req.body.nombre + "', PRECIO = " + req.body.precio + ", " +
+                let query= "UPDATE PRODUCTO SET NOMBRE = '" + req.body.nombre + "', PRECIO = " + req.body.precio + ", IMAGEN = '" + req.body.imagen + "' " +
                 "CANTIDAD = " + req.body.cantidad + ", MARCA = '" + req.body.marca + "', DESCRIPCION = '" + req.body.descripcion + "' WHERE ID_SKU = " + req.params.idProducto;
                 
                 sql.query(query, (respuestaQuery)=>
@@ -560,24 +487,10 @@ router.post('/empleados/crear', checkAuthenticated, async function(req,res,next)
         email : {type: "email", maxLength: 60, minLength: 1},
         password : {type: "string", maxLength: 30, minLength: 1}
     };
-    
-    let validateFieldsOnlyLetters = ["nombre", "apellidoPaterno", "apellidoMaterno"];
 
     try 
     {
         await verificator.Validate(parametrosDeseados, req.body);
-
-        const pattern = /^[a-zA-ZÀ-ÿ\u00f1\u00d1]+(\s*[a-zA-ZÀ-ÿ\u00f1\u00d1]*)*[a-zA-ZÀ-ÿ\u00f1\u00d1]+$/g;
-
-        for(const validateFieldOnlyLetter of validateFieldsOnlyLetters)
-        {
-            if(!pattern.test(req.body[validateFieldOnlyLetter]))
-            { 
-                alertaError = true;
-                mensajeAlertaModulos = "El campo " + validateFieldOnlyLetter + " solo puede incluir letras";
-                res.redirect('/administrador/empleados/crear');
-            }    
-        }
 
         let query = "SELECT * FROM USUARIO WHERE EMAIL = '" + req.body.email + "'";
         sql.query(query, (respuestaQuery)=>
@@ -659,23 +572,9 @@ router.post('/empleados/actualizar/:idEmpleado', checkAuthenticated, async funct
         email : {type: "email", maxLength: 60, minLength: 1},
     };
     
-    let validateFieldsOnlyLetters = ["nombre", "apellidoPaterno", "apellidoMaterno"];
-
     try 
     {
         await verificator.Validate(parametrosDeseados, req.body);
-
-        const pattern = /^[a-zA-ZÀ-ÿ\u00f1\u00d1]+(\s*[a-zA-ZÀ-ÿ\u00f1\u00d1]*)*[a-zA-ZÀ-ÿ\u00f1\u00d1]+$/g;
-
-        for(const validateFieldOnlyLetter of validateFieldsOnlyLetters)
-        {
-            if(!pattern.test(req.body[validateFieldOnlyLetter]))
-            { 
-                alertaError = true;
-                mensajeAlertaModulos = "El campo " + validateFieldOnlyLetter + " solo puede incluir letras";
-                res.redirect('/administrador/empleados/actualizar/' + req.params.idEmpleado);   
-            }    
-        }
 
         let query = "SELECT * FROM USUARIO WHERE EMAIL = '" + req.body.email + "'";
         sql.query(query, (respuestaQuery)=>
@@ -750,6 +649,184 @@ router.get('/empleados/buscar', checkAuthenticated, function(req,res,next)
 {
     //res.render('Administrador/productos', {administrador:req.user})
     let query= "select * from usuario where ADMINISTRADOR = 'true' and NOMBRE like '%" + req.query.nombreBuscar + "%'";
+    sql.query(query, (respuestaQuery)=>
+    {
+        busqueda=true;
+        resultadosBusqueda=respuestaQuery.recordset;
+        res.redirect('./')
+    })
+});
+
+router.get('/tips', checkAuthenticated, function(req,res,next)
+{
+    res.render('Administrador/tips', {administrador:req.user, alertaModulos:alertaModulos, mensajeAlertaModulos:mensajeAlertaModulos, busqueda:busqueda, resultadosBusqueda:resultadosBusqueda, error:alertaError, mensajeError: mensajeAlertaModulos})
+    alertaModulos=false;
+    alertaError=false;
+    mensajeAlertaModulos="";
+    busqueda=false;
+    resultadosBusqueda=null;
+});
+
+router.get('/tips/crear', checkAuthenticated, function(req,res,next)
+{
+    res.render('Administrador/crear-tip', { error: alertaError, mensajeError: mensajeAlertaModulos });
+    alertaError = false;
+    mensajeAlertaModulos = "";
+});
+
+router.post('/tips/crear', checkAuthenticated, async function(req,res,next)
+{
+    let parametrosDeseados =
+    {
+        titulo : {type: "string", maxLength: 128, minLength: 1},
+        cuerpo : {type: "string", minLength: 1},
+        bullet: {type: "string", minLength: 1}
+    };
+    
+    try 
+    {
+        await verificator.Validate(parametrosDeseados, req.body);
+
+        let query = "INSERT INTO TIP (TITULO, BULLET, CUERPO) VALUES('" + req.body.titulo + "', '" + req.body.bullet + "', '" + req.body.cuerpo + "')";
+        sql.query(query, function(respuestaQuery)
+        {
+            console.log(respuestaQuery);
+            if(respuestaQuery.rowsAffected[0] > 0)
+            {
+                alertaModulos=true;
+                mensajeAlertaModulos="Tip agregado";
+                res.redirect('/administrador/tips');
+            }
+            else
+            {
+                console.log(respuestaQuery);
+                alertaError = true;
+                mensajeAlertaModulos = "Hubo un error al intentar crear a el tip";
+                res.redirect('/administrador/tips/crear');
+            }
+        });
+    }
+    catch(error)
+    {
+        if(error.hasOwnProperty('expectedMaxLength'))
+        {
+            alertaError = true;
+            mensajeAlertaModulos = 'El campo ' + error.propertyName + ' es incorrecto su tamaño máximo es de ' + error.expectedMaxLength + " carácteres";
+            res.redirect('/administrador/tips/crear');
+        }
+        else
+        {
+            alertaError = true;
+            mensajeAlertaModulos = 'El campo ' + error.propertyName + ' es incorrecto';
+            res.redirect('/administrador/tips/crear');
+        }
+    }
+});
+
+router.get('/tips/actualizar/:idTip', checkAuthenticated, function(req,res,next)
+{
+    let query= "select * from tip where ID_TIP = " + req.params.idTip;
+    sql.query(query, (respuestaQuery)=>
+    {
+        if(respuestaQuery.recordset.length > 0)
+        {
+            res.render('Administrador/actualizar-tip', { tip: respuestaQuery.recordset[0], error: alertaError, mensajeError: mensajeAlertaModulos });
+            alertaError = false;
+            mensajeAlertaModulos = "";
+        }
+        else
+        {
+            alertaError = true;
+            mensajeAlertaModulos += " Hubo un error al intentar obtener la información del tip solicitado"
+            res.redirect('/administrador/tips');
+        }
+    })
+});
+
+router.post('/tips/actualizar/:idTip', checkAuthenticated, async function(req,res,next)
+{
+    let parametrosDeseados =
+    {
+        titulo : {type: "string", maxLength: 128, minLength: 1},
+        cuerpo : {type: "string", minLength: 1},
+        bullet : {type: "string", minLength: 1},
+    };
+
+    try 
+    {
+        await verificator.Validate(parametrosDeseados, req.body);
+
+        let query = "SELECT * FROM TIP WHERE TITULO = '" + req.body.nombre + "'";
+        sql.query(query, (respuestaQuery)=>
+        {
+            if(respuestaQuery.rowsAffected[0] === 0 || respuestaQuery.recordset[0].ID_TIP == req.params.idTip)
+            {
+                let query= "UPDATE TIP SET TITULO = '" + req.body.titulo + "', CUERPO = '" + req.body.cuerpo + "', BULLET = '" + req.body.bullet + "' WHERE ID_TIP = " + req.params.idTip;
+                
+                sql.query(query, (respuestaQuery)=>
+                {
+                    if(respuestaQuery.rowsAffected[0] > 0)
+                    {
+                        alertaModulos=true;
+                        mensajeAlertaModulos="Tip Actualizado";
+                        res.redirect('/administrador/tips');
+                    }
+                    else
+                    {
+                        alertaError = true;
+                        mensajeAlertaModulos = "Hubo un error al intentar actualizar a el tip";
+                        res.redirect('/administrador/tips/actualizar/' + req.params.idTip);   
+                    }
+                });
+            }
+            else
+            {
+                alertaError = true;
+                mensajeAlertaModulos = "No se puede actualizar al tip, porque otro tip ya posee ese titulo, por favor use otro.";
+                res.redirect('/administrador/tips/actualizar/' + req.params.idTip);
+            }
+        });
+    }
+    catch(error)
+    {
+        if(error.hasOwnProperty('expectedMaxLength'))
+        {
+            alertaError = true;
+            mensajeAlertaModulos = 'El campo ' + error.propertyName + ' es incorrecto su tamaño máximo es de ' + error.expectedMaxLength + " carácteres";
+            res.redirect('/administrador/tips/actualizar/' + req.params.idTip);
+        }
+        else
+        {
+            alertaError = true;
+            mensajeAlertaModulos = 'El campo ' + error.propertyName + ' es incorrecto';
+            res.redirect('/administrador/tips/actualizar/' + req.params.idTip);
+        }
+    }
+});
+
+router.get('/tips/eliminar/:idTip', checkAuthenticated, function(req,res,next)
+{
+    let query= "delete from tio where ID_TIP = " + req.params.idTip;
+    sql.query(query, (respuestaQuery)=>
+    {
+        if(respuestaQuery.rowsAffected[0] > 0)
+        {
+            alertaModulos=true;
+            mensajeAlertaModulos="Tip Eliminado";
+            res.redirect('/administrador/tips');
+        }
+        else
+        {
+            alertaError=true;
+            mensajeAlertaModulos="Hubo un error al intentar eliminar a el tip";
+            res.redirect('/administrador/tips');
+        }
+    })
+});
+
+router.get('/tips/buscar', checkAuthenticated, function(req,res,next)
+{
+    let query= "select * from tip where TITULO like '%" + req.query.nombreBuscar + "%'";
     sql.query(query, (respuestaQuery)=>
     {
         busqueda=true;

@@ -1,7 +1,7 @@
 <% for(const producto of productos){%>
    <div class="col-lg-3	col-md-6 col-sm-6 height-margin-1">
       <div class="col-12 top-preview-card-image-container justify-content-center d-flex">
-         <img class="preview-card-image" src="/images/productos/<%= producto.ID_SKU %>.jpg">
+         <img class="preview-card-image" src="<%= producto.IMAGEN %>">
       </div>
       <div class="col-12 bottom-preview-card-image-container">
          <h5 class="card-title" title="<%= producto.NOMBRE %>"><%= producto.NOMBRE.length > 20 ? producto.NOMBRE.slice(0, 17) + "..." : producto.NOMBRE %></h5>

@@ -2,13 +2,29 @@
 <% for(let i=0; i<carritoCompras.length; i++){%>
    <div class="row shopping-car-container">
       <div class="col-6  col-md-3 col-lg-3 height-padding-15px">
-         <img class="shopping-car-image" src="/images/productos/<%= carritoCompras[i].ID_SKU %>.jpg">
+         <img class="shopping-car-image" src="<%= carritoCompras[i].IMAGEN %>">
       </div>
-      <div class="col-6 col-md-9 col-lg-9 height-padding-15px">
+      <div class="col-6 col-md-9 col-lg-9 height-padding-15px item-shopping-car">
          <h5 class="card-title" title="<%= carritoCompras[i].NOMBRE %>"><%= carritoCompras[i].NOMBRE %></h5>
          <p class="card-text" title="<%= carritoCompras[i].MARCA %>"><%= carritoCompras[i].MARCA %></p>
          <p class="card-text" title="<%= carritoCompras[i].DESCRIPCION %>"><%= carritoCompras[i].DESCRIPCION %></p>
-         <p class="card-text">$ <%= carritoCompras[i].PRECIO%></p>
+         <div class="form-group">
+            <label for="cantidadCombobox">Cantidad a comprar</label>
+            <select class="form-control max-width-15 quantity" id="cantidadCombobox-<%= i %>" onchange="onChangeItemsQuantity(event)">
+              <script>
+                  for(let i = 0; i < '<%= carritoCompras[i].CANTIDADPRODUCTO %>'; i++)
+                  {
+                     document.getElementById('cantidadCombobox-<%= i %>').options[i] = new Option(i + 1, i + 1);
+                     if(i + 1 == '<%= carritoCompras[i].CANTIDADCARRITO %>' )
+                     {
+                        document.getElementById('cantidadCombobox-<%= i %>').options[i].selected = true;
+                     }
+                  }
+              </script>
+             
+            </select>
+          </div>
+         <p class="card-text price" value="<%= carritoCompras[i].PRECIO%>">Precio unitario: $ <%= carritoCompras[i].PRECIO%></p>
          <a href="/eliminar-carrito/<%= carritoCompras[i].ID_SKU %>" class="btn btn-success">Eliminar del carrito de compras</a>
       </div>
    </div>

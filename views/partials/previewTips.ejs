@@ -3,7 +3,7 @@
       <a class="button_tip_preview" href="/tips/<%= tip.ID_TIP %>">
          <div class="col-12 top-preview-card-image-container justify-content-center d-flex">
             <% if(tip.BULLET !== null) { %>
-               <img class="tip-image" src="/images/bullets/<%= tip.BULLET %>">
+               <img class="tip-image" src="<%= tip.BULLET %>">
                <div class="middle">
                   <p style="text-decoration: underline;">Ver tip</p>
                </div>
@@ -12,7 +12,7 @@
          <div class="col-12 bottom-preview-card-image-container">
             <p class="card-text title-tip-preview" title="<%= tip.TITULO %>"><%= tip.TITULO.length > 22 ? tip.TITULO.slice(0, 19) + "..." : tip.TITULO %></p>
             <div class="text-preview">
-               <%- (tip.CUERPO.slice(0, 220)).replace('<div class="col-lg-8 col-12  space-between-parraphs">', '') + "..." %>
+               <%- (tip.CUERPO.slice(0, 180)).replace('<div class="col-lg-8 col-12  space-between-parraphs">', '') + "..." %>
             </div>
          </div>
       </a>

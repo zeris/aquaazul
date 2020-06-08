@@ -10,6 +10,7 @@
   "author": "Fernanda Daniela Ramos Argueta",
   "license": "ISC",
   "dependencies": {
+    "@ckeditor/ckeditor5-upload": "^19.0.1",
     "body-parser": "^1.19.0",
     "chai": "^4.2.0",
     "connect-flash": "^0.1.1",
@@ -27,6 +28,9 @@
     "tedious": "^8.0.1"
   },
   "devDependencies": {
+    "@babel/core": "^7.10.2",
+    "@babel/node": "^7.10.1",
+    "@babel/preset-env": "^7.10.2",
     "nodemon": "^2.0.2"
   }
 }

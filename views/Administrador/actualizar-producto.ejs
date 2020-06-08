@@ -4,6 +4,7 @@
         <title>Aqua azul - Actualizar Producto</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        <script type="text/javascript" src="/js/formValidator.js"></script>
         <%- include('./partials/head'); %>
     </head>
     <body>
@@ -24,39 +25,60 @@
                   <h3 class="text-center">Ingrese los datos a modificar del producto</h3>
                </div>
                <div class="row justify-content-center top-margin-5">
-                  <form action="/administrador/productos/actualizar/<%= producto.ID_SKU %>" method="POST">
-                     <div class="form-group">
+                  <form action="/administrador/productos/actualizar/<%= producto.ID_SKU %>" method="POST" onsubmit="return verificarInput();">
+                     <div class="form-row padding-width-400px"></div>
                         <div class="col-12">
                            <h5>Nombre</h5>
-                           <input class="form-control" type="text" name="nombre" value="<%= producto.NOMBRE %>"/>
+                           <input class="form-control" type="text" name="nombre" value="<%= producto.NOMBRE %>" onkeyup="validateNames(event)" required/>
+                           <div id="message-nombre" class="invalid-feedback" hidden>
+                              Introduzca solo letras (A-Z) o (a-z). Máximo 50 caracteres.
+                           </div>
                         </div>
-                     </div>
-                     <div class="form-group">
-                         <div class="col-12">
-                            <h5>Precio</h5>
-                            <input class="form-control" type="number" name="precio" value="<%= producto.PRECIO %>"/>
-                         </div>
-                      </div>
-                      <div class="form-group">
-                         <div class="col-12">
-                            <h5>Cantidad</h5>
-                            <input class="form-control" type="number" name="cantidad" value="<%= producto.CANTIDAD %>"/>
-                         </div>
-                      </div>
-                      <div class="form-group">
-                         <div class="col-12">
-                            <h5>Marca</h5>
-                            <input class="form-control" type="text" name="marca" value="<%= producto.MARCA%>"/>
-                         </div>
-                      </div>
-                      <div class="form-group">
-                         <div class="col-12">
-                            <h5>Descripción</h5>
-                            <input class="form-control" type="text" name="descripcion" value="<%= producto.DESCRIPCION%>"/>
-                         </div>
-                      </div>
-                     <div class="form-group">
-                        <div class="col-12 justify-content-center d-flex">
+
+                        <div class="col-12">
+                           <h5>Precio</h5>
+                           <input class="form-control" type="number" name="precio" value="<%= producto.PRECIO %>" onkeyup="validateNames(event)" required/>
+                           <div id="message-precio" class="invalid-feedback" hidden>
+                              El precio no puede ser mayor a $1000.00. Máximo 2 decimales.
+                           </div>
+                        </div>
+
+                        <div class="col-12">
+                           <h5>Cantidad</h5>
+                           <input class="form-control" type="number" name="cantidad" value="<%= producto.CANTIDAD %>" onkeyup="validateNames(event)" required/>
+                           <div id="message-cantidad" class="invalid-feedback" hidden>
+                              La cantidad debe de ser mínimo de 1. Máximo una cantidad de 500 productos.
+                           </div>
+                        </div>
+
+                        <div class="col-12">
+                           <h5>Marca</h5>
+                           <input class="form-control" type="text" name="marca" value="<%= producto.MARCA%>" onkeyup="validateNames(event)" required/>
+                           <div id="message-marca" class="invalid-feedback" hidden>
+                              Máximo 50 caracteres.
+                           </div>
+                        </div>
+
+                        <div class="col-12">
+                           <h5>Descripción</h5>
+                           <input class="form-control" type="text" name="descripcion" value="<%= producto.DESCRIPCION%>" onkeyup="validateNames(event)" required/>
+                           <div id="message-descripcion" class="invalid-feedback" hidden>
+                              Máximo 120 caracteres.
+                           </div>
+                        </div>
+
+                        <div class="col-12">
+                           <h5>Imágen del producto</h5>
+                           <div class="col-12 col-md-6">
+                              <input type="file" id='file-input' required/>
+                              <input type="text" name="imagen" id='file-input2' value="<%= producto.IMAGEN %>" required hidden/>
+                           </div>
+                           <div class="col-12 col-md-6 top-margin-5">
+                              <img id='preview' class="card-image" src='<%= producto.IMAGEN %>'/>
+                           </div>
+                        </div>
+
+                        <div class="col-12 justify-content-center d-flex top-margin-5">
                            <input class="btn btn-primary col-12" type="submit" value="Actualizar Producto"/>
                         </div>
                      </div>          
@@ -64,5 +86,22 @@
                </div>
             </div>
          </div>
+         <script>
+            var input = document.querySelector('#file-input');
+            input.addEventListener('change', preview);
+            function preview()
+            {
+               var fileObject = this.files[0];
+               var fileReader = new FileReader();
+               fileReader.readAsDataURL(fileObject);
+               fileReader.onload = function()
+               {
+                  var result = fileReader.result;
+                  var img = document.querySelector('#preview');
+                  img.setAttribute('src', result);
+                  document.querySelector('#file-input2').value = result;
+               }
+            }
+         </script>
     </body>
 </html>

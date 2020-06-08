@@ -25,11 +25,45 @@
                    <% } %>
                 </div>
                 <div class="col-lg-2 col-md-2 col-12 order-md-2 order-1">
-                    <h4 class="justify-content-center d-flex">Total de compra: $ <%= totalCompra %></h4>
+                    <script type='text/javascript'>
+                        function getProductsTotalPrice()
+                        {
+                           var items = document.getElementsByClassName('item-shopping-car');
+                           var totalPrice = 0;
+                           var itemsLength = '<%= carritoCompras.length %>'
+                           for(let i = 0; i < itemsLength; i++)
+                            {
+                                var priceItem = items[i].getElementsByClassName('price')[0].getAttribute('value');
+                                var itemQuantity = items[i].getElementsByClassName('quantity')[0];
+                                for(let j = 0; j < itemQuantity.options.length; j++)
+                                {
+                                    if(itemQuantity.options[j].selected === true)
+                                    {
+                                        totalPrice += (priceItem * itemQuantity.options[j].value);
+                                        break;
+                                    }
+                                }
+                            } 
+                            document.getElementById('totalCompra').textContent = "Total de compra: $" + totalPrice;
+                            return totalPrice;
+                        }
+
+                        function onChangeItemsQuantity(event)
+                        {
+                            getProductsTotalPrice();
+                        }
+
+                       
+                    </script>
+                    <h4 class="justify-content-center d-flex" id='totalCompra'>Total de compra: $ </h4>
+                    <script>getProductsTotalPrice();</script>
                     <% if(carritoCompras.length > 0) { %>
                         <%- include('./partials/buttonPaypal'); %>
                     <% } %>
                 </div>
+                <script>
+                    
+                </script>
             </diV>
             
         </div>

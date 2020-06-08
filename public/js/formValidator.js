@@ -8,7 +8,8 @@ const fields =
 	marca: { maxLength: 60, onlyLetters: false },
 	precio: { maxLength: 7, integer: false, maxSize: 1000, minSize: 0},
 	cantidad: { maxLength: 3, integer: true, maxSize: 500, minSize: 1 },
-	descripcion: { maxLength: 120, onlyLetters: false }
+	descripcion: { maxLength: 120, onlyLetters: false },
+	titulo: { maxLength: 128, onlyLetters: false },
 }
 
 
@@ -31,11 +32,18 @@ function validateNames(event, inputElement = null)
 	else 
 	{
 		// Segunda validacion, si input es mayor que 35
-		if(value.length > fields[input.name].maxLength) 
+		if(fields.hasOwnProperty(input.name) && fields[input.name].hasOwnProperty('maxLength'))
 		{
-			isValid = false;
-		} 
-		else 
+			if(value.length > fields[input.name].maxLength) 
+			{
+				isValid = false;
+			} 
+			else 
+			{
+				isValid = true;
+			}
+		}
+		else
 		{
 			isValid = true;
 		}
@@ -61,7 +69,24 @@ function validateNames(event, inputElement = null)
 			}
 		break;
 		case 'password':
-
+			let inputPassword = document.getElementsByName('password')[0];
+			let inputVerifyPassword = document.getElementsByName('verifyPassword')[0];
+			if(inputPassword.value !== inputVerifyPassword.value || inputPassword.value.length < 1 || inputVerifyPassword.value.length < 1 )
+			{
+				inputVerifyPassword.className = 'form-control is-invalid';
+				inputPassword.className = 'form-control is-invalid';
+				document.getElementById('message-verifyPassword').hidden = false;
+				document.getElementById('message-password').hidden = false;
+				isValid = false;
+			}
+			else
+			{
+				inputVerifyPassword.className = 'form-control is-valid';
+				inputPassword.className = 'form-control is-valid';
+				document.getElementById('message-verifyPassword').hidden = true;
+				document.getElementById('message-password').hidden = true;
+				isValid = true;
+			}
 		break;
 		case 'number':
 			if(value > fields[input.name].maxSize)

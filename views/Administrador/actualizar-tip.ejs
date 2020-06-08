@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <title></title>
+      <%- include('./partials/head'); %>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+      <script src="https://cdn.ckeditor.com/ckeditor5/19.1.1/classic/translations/es.js"></script>
+      <script src='/ckeditor5/ckeditor.js'></script>
+      <script type="text/javascript" src="/js/formValidator.js"></script>
+   </head>
+   <body>
+      <%- include('./partials/navbar'); %>
+      <div class="row all-area">
+         <div class="col-lg-3 col-md-12 col-12">
+            <%- include('./partials/menu-tips'); %>
+         </div>
+         <div class="col-lg-9 col-md-12 col-12">
+            <div class="content container">
+               <div class="content container">
+                  <% if(error) { %>
+                     <div class="alert alert-danger">
+                         <button class="close" data-dismiss="alert"><span>&times;</span></button>
+                         <%= mensajeError %>
+                     </div>
+                 <% } %>
+                  <div class="row justify-content-center top-margin-3">
+                     <h3 class="text-center">Ingrese los datos a modificar del tip</h3>
+                  </div>
+                  <div class="row justify-content-center top-margin-5">
+                     <form action="/administrador/tips/actualizar/<%= tip.ID_TIP %>" method="POST" onsubmit="return verificarInput();">
+                        <div class="form-row ">
+                           <div class="col-12">
+                              <h5>Titulo del tip</h5>
+                              <input class="form-control" type="text" name="titulo" value="<%= tip.TITULO %>" required onkeyup="validateNames(event)"/>
+                              <div id="message-titulo" class="invalid-feedback" hidden>
+                                 Máximo 128 caracteres.
+                              </div>
+                           </div>
+   
+                           <div class="col-12">
+                              <h5>Contenido del tip</h5>
+                              <textarea name="cuerpo" id="cuerpo" rows="10" cols="30" required onkeyup="validateNames(event)">
+                                 <%- tip.CUERPO %>
+                             </textarea>
+                              <div id="message-cuerpo" class="invalid-feedback" hidden>
+                                 No puede estar vacio
+                              </div>
+                           </div>
+
+                           <div class="col-12">
+                              <h5>Imágen de previsualización del tip</h5>
+                              <input type="file" id='file-input'/>
+                              <input type="text" name="bullet" id='file-input2' value="<%= tip.BULLET %>" required hidden/>
+                              <img id='preview' class="card-image" src='<%= tip.BULLET %>'/>
+                           </div>
+   
+                           <div class="col-12 justify-content-center d-flex top-margin-5">
+                              <input class="btn btn-primary col-12" type="submit" value="Actualizar Tip"/>
+                           </div>
+                        </div>          
+                     </form>
+                  </div>
+               </div>
+               
+            </div>
+         </div>
+      </div>
+      <script>
+         var input = document.querySelector('#file-input');
+         input.addEventListener('change', preview);
+         function preview()
+         {
+            var fileObject = this.files[0];
+            var fileReader = new FileReader();
+            fileReader.readAsDataURL(fileObject);
+            fileReader.onload = function()
+            {
+               var result = fileReader.result;
+               var img = document.querySelector('#preview');
+               img.setAttribute('src', result);
+               document.querySelector('#file-input2').value = result;
+            }
+         }
+      </script>
+      <script type="text/javascript">
+         var cloudServicesConfig = 
+         {
+            tokenUrl: "https://72208.cke-cs.com/token/dev/dXVggM2nbf3KUxFU4nkFlEH0QFw6wfcWlUrSezZDacznrclEon4N3nLSWdef",
+            uploadUrl: "https://72208.cke-cs.com/easyimage/upload/",
+         }
+         var imageConfig = 
+         {
+            toolbar: [ 'imageTextAlternative', '|', 'imageStyle:full' ],
+
+            styles: ['full']
+         }
+         ClassicEditor.create(document.getElementById('cuerpo'), 
+         { 
+            cloudServices: cloudServicesConfig, 
+            image: imageConfig,
+            removePlugins: [ 'Heading', 'Link' ],
+            language: 'es',
+            alignment: {
+               options: [ 'left', 'right' ]
+            }
+         });
+      </script>
+   </body>
+</html>
