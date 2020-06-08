@@ -19,11 +19,7 @@ function validateNames(event, inputElement = null)
 	let value = input.value;
 	let isValid = false;
 	
-	const message = document.getElementById('message-' + input.name);
-
-	console.log(value);
-
-	console.log(value.length);
+	let message = document.getElementById('message-' + input.name);
 
 	if(value.length === 0) 
 	{
@@ -71,20 +67,17 @@ function validateNames(event, inputElement = null)
 		case 'password':
 			let inputPassword = document.getElementsByName('password')[0];
 			let inputVerifyPassword = document.getElementsByName('verifyPassword')[0];
+			message = document.getElementById('message-verifyPassword')
 			if(inputPassword.value !== inputVerifyPassword.value || inputPassword.value.length < 1 || inputVerifyPassword.value.length < 1 )
 			{
 				inputVerifyPassword.className = 'form-control is-invalid';
 				inputPassword.className = 'form-control is-invalid';
-				document.getElementById('message-verifyPassword').hidden = false;
-				document.getElementById('message-password').hidden = false;
 				isValid = false;
 			}
 			else
 			{
 				inputVerifyPassword.className = 'form-control is-valid';
 				inputPassword.className = 'form-control is-valid';
-				document.getElementById('message-verifyPassword').hidden = true;
-				document.getElementById('message-password').hidden = true;
 				isValid = true;
 			}
 		break;
@@ -113,6 +106,9 @@ function validateNames(event, inputElement = null)
 			{
 				isValid = false;
 			}
+		break;
+		case 'file':
+			isValid = true;
 		break;
 	}
 	

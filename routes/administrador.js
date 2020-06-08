@@ -275,37 +275,9 @@ router.post('/productos/crear', checkAuthenticated, async function(req,res,next)
                 {
                     if(respuestaQuery.rowsAffected[0] > 0)
                     {
-                        query = "SELECT ID_SKU FROM PRODUCTO WHERE NOMBRE = '" + req.body.nombre + "' AND MARCA = '" + req.body.marca  + "' AND PRECIO = " + req.body.precio + " " +
-                        "AND CANTIDAD = " + req.body.cantidad + " AND DESCRIPCION = '" +  req.body.descripcion + "'";
-                        sql.query(query, (respuestaQuery)=>
-                        {
-                            if(respuestaQuery.recordset.length > 0)
-                            {
-                                let basePath =path.dirname(require.main.filename);
-                                fs.rename(basePath + "/temp/" + req.file.filename , basePath + "/public/images/productos/" + respuestaQuery.recordset[0].ID_SKU + ".jpg", (error)=>
-                                {
-                                    if(error)
-                                    {
-                                        alertaModalertaErrorulos = true;
-                                        mensajeAlertaModulos = "EL producto ha sido guardado, pero hubo un error al intentar renombrar y guardar la imágen";
-                                        res.redirect('/administrador/productos/crear');
-                                    }
-                                    else
-                                    {
-                                        alertaModulos=true;
-                                        mensajeAlertaModulos="Producto Creado";
-                                        res.redirect('./');
-                                    }
-                                });
-                            }
-                            else
-                            {
-                                alertaError = true;
-                                mensajeAlertaModulos = "EL producto ha sido guardado, pero hubo un error al intentar guardar la imágen";
-                                res.redirect('/administrador/productos/crear');
-                            }
-                            
-                        });
+                        alertaModulos=true;
+                        mensajeAlertaModulos="Producto Creado";
+                        res.redirect('./');
                     }
                     else
                     {
