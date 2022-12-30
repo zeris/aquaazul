@@ -18,7 +18,7 @@
     "email-regex": "^4.0.0",
     "express": "^4.17.1",
     "express-session": "^1.17.0",
-    "mocha": "^7.1.1",
+    "mocha": "^10.2.0",
     "moment": "^2.26.0",
     "mssql": "^6.1.0",
     "multer": "^1.4.2",
